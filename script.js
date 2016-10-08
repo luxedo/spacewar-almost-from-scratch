@@ -1,5 +1,5 @@
 /*
-spacewar-almost-from-scratch
+pong-almost-from-scratch
 This is an attempt of making the game pong using modern programming languages
 
 Copyright (C) 2016  Luiz Eduardo Amaral - <luizamaral306@gmail.com>
@@ -17,3 +17,8 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
+"use strict"
+
+function startGame() {
+  Game.start();
+}
