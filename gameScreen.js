@@ -17,43 +17,18 @@ GNU General Public License for more details.
 You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
-html, body {
-  background-color: #000;
-  color: #FFF;
-  font-family: monospace;
-  text-align: center;
-  margin:0;
-  padding:0;
-  height:100%;
+"use strict";
+
+gameScreen.init = function () {
+  writeText(10, 20, "SPACEWAR ALMOST", 3);
+  writeText(10, 70, "FROM SCRATCH", 3);
+  writeText(10, 150, "HELLO WORLD!", 2);
+  writeText(10, 200, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", 2);
+  writeText(10, 250, "0123456789.,:;!?\"'°$/()|-+=*&<>", 2);
+  drawArray([[20, 300], [580, 300]]);
+  drawArray([[20, 300], [20, 580]]);
+  drawArray([[20, 300], [580, 580]]);
 }
 
-#game {
-  margin-top: 10%;
-  max-height: 80%;
-  max-width: 80%;
-  border-color: #FFF;
-  border-style: solid;
-  border-width: thick;
-}
-
-#game-frame {
-    padding-bottom: 150px;
-}
-
-.container {
-  min-height: 100%;
-  position: relative;
-}
-
-.footer {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 150px;
-}
-
-a:link, a:visited, a:hover, a:active {
-  color: #FFF;
-  text-decoration: underline;
-}
+gameScreen.draw = function () {}
+gameScreen.update = function () {}

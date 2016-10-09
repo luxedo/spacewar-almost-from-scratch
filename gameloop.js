@@ -1,5 +1,5 @@
 /*
-pong-almost-from-scratch
+spacewar-almost-from-scratch
 This is an attempt of making the game pong using modern programming languages
 
 Copyright (C) 2016  Luiz Eduardo Amaral - <luizamaral306@gmail.com>
@@ -40,6 +40,9 @@ let Game = {
   width: 600,
   height: 600
 };
+
+// Screens objects
+let gameScreen = {}
 
 Game._onEachFrame = (function() {
   if (window.RequestAnimationFrame) {
