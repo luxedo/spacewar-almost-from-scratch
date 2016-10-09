@@ -32,6 +32,20 @@ function drawArray(array, width=1, color="#FFF") {
   Game.context.stroke();
 }
 
+function drawCircle(x, y, radius, width=1, color="#FFF") {
+  // setup style
+  Game.context.lineWidth = width;
+  Game.context.strokeStyle = color;
+  // draw circle
+  Game.context.beginPath();
+  Game.context.arc(x, y, radius, 0, 2*Math.PI);
+  Game.context.stroke();
+}
+
+function drawPoint(x, y, width=2, color="#FFF") {
+  drawArray([[x, y], [x+width, y+width]], width)
+}
+
 function parseLetter(letter) {
   let limits = alphabeth[letter]
     .match(/\D{2}/)[0]

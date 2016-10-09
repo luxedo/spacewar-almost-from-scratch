@@ -18,17 +18,24 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 "use strict";
+const RADIUS = 300;
+const STARS = 40;
 
 gameScreen.init = function () {
-  writeText(10, 20, "SPACEWAR ALMOST", 3);
-  writeText(10, 70, "FROM SCRATCH", 3);
-  writeText(10, 150, "HELLO WORLD!", 2);
-  writeText(10, 200, "ABCDEFGHIJKLMNOPQRSTUVWXYZ", 2);
-  writeText(10, 250, "0123456789.,:;!?\"'°$/()|-+=*&<>", 2);
-  drawArray([[20, 300], [580, 300]]);
-  drawArray([[20, 300], [20, 580]]);
-  drawArray([[20, 300], [580, 580]]);
+  gameScreen.stars = []
+  let [xc, yc] = [Game.width/2, Game.height/2]
+  while (gameScreen.stars.length < STARS) {
+    let [xp, yp] = [Math.random()*Game.width, Math.random()*Game.height]
+    if (Math.sqrt(Math.pow(xp-xc, 2)+Math.pow(yp-yc, 2))<RADIUS) {
+      gameScreen.stars.push([xp, yp]);
+    }
+  }
 }
 
-gameScreen.draw = function () {}
+gameScreen.draw = function () {
+  Game.context.clearRect(0, 0, Game.width, Game.height);
+  drawCircle(Game.width/2, Game.height/2, RADIUS)
+  gameScreen.stars.forEach((value) => drawPoint(...value));
+}
+
 gameScreen.update = function () {}

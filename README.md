@@ -13,7 +13,7 @@ Since I've already worked on a project to reproduce [PONG](https://armlessjohn40
 * ~~Host somewhere~~
 * ~~Create the gameloop~~
 * ~~Create rendering functions~~
-* Design board
+* ~~Design board~~
 * Create `ship` class
 * Create `blackhole` sprite
 * Implement gravity mechanics
@@ -84,5 +84,11 @@ alphabeth = {
 }
 ```
 I then made a parser for this character set to transform it's language into the vectors to be drawn.
-With that, I created a function that receives `strings` and writes them in the screen.
+With that, I created a function that receives `strings` and writes them in the screen. Also two more functions to make it easier to draw stuff: `drawCircle`, `drawPoint`.
+
 ![drawing functions](report-assets/drawing-functions.png "drawing functions")
+
+## 4:20 - Board Design
+The board in this game is just some stars in the background. I made the play area round, so I'm drawing a circle to show that. The stars are generated randomly in each round.
+
+![board design](report-assets/board-design.png "board design")

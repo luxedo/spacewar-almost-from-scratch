@@ -31,9 +31,6 @@ html, body {
   margin-top: 10%;
   max-height: 80%;
   max-width: 80%;
-  border-color: #FFF;
-  border-style: solid;
-  border-width: thick;
 }
 
 #game-frame {
