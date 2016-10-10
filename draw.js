@@ -20,8 +20,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 "use strict";
 
 const ROTATION_SPEED = 3;
-const THRUSTER_SPEED = 0.01;
+const THRUSTER_SPEED = 0.002;
 const FIRE_LENGTH = 10;
+const SHOT_DISTANCE = 300;
+const SHOT_SPEED = 1;
+const SHOT_SIZE = 5;
+const SHOT_INTERVAL = 500;
 
 function drawArray(array, width=1, color="#FFF") {
   array = array.slice();
@@ -88,7 +92,10 @@ class BaseSprite {
     this.y = y;
   }
   draw() {}
-  update() {}
+  update() {
+    this.x += this.speedX;
+    this.y += this.speedY;
+  }
 }
 
 class Ship extends BaseSprite {
@@ -104,43 +111,66 @@ class Ship extends BaseSprite {
     this.direction = 0;
     this.speedX = 0;
     this.speedY = 0;
+    this.shots = [];
+    this.shotTimeout = Date.now();
 
     // find centroid
     let flat = [].concat.apply([], this.shape);
-    let left = Math.min(...flat.map(value => value[0]))
-    let right = Math.max(...flat.map(value => value[0]))
-    let top = Math.min(...flat.map(value => value[1]))
-    let bottom = Math.max(...flat.map(value => value[1]))
-    this.center = [(left+right)/2, (top+bottom)/2];
-    this.rear = [left*this.size+this.center[0], (top+bottom)/2+this.center[1]*this.size];
+    this.left = Math.min(...flat.map(value => value[0]))
+    this.right = Math.max(...flat.map(value => value[0]))
+    this.top = Math.min(...flat.map(value => value[1]))
+    this.bottom = Math.max(...flat.map(value => value[1]))
+    this.center = [(this.left+this.right)/2, (this.top+this.bottom)/2];
+
     // translate center
     this.showShape = this.shape
       .map(value0 => value0
         .map(value1 => [value1[0]-this.center[0], value1[1]-this.center[1]]
     ));
   }
+  rotateVector(vector) {
+    vector = [vector[0]-this.center[0], vector[1]-this.center[1]];
+    let x = (vector[0]*Math.cos(this.rotation)-vector[1]*Math.sin(this.rotation));
+    let y = (vector[1]*Math.cos(this.rotation)+vector[0]*Math.sin(this.rotation));
+    return [x, y]
+  }
+
+  get rear() {
+    let retval = this.rotateVector([this.left*this.size+this.center[0], (this.top+this.bottom)/2+this.center[1]*this.size]);
+    retval = [retval[0]+this.x, retval[1]+this.y]
+    return retval;
+  }
+
+  get tip() {
+    let retval = this.rotateVector([this.right*this.size+this.center[0], (this.top+this.bottom)/2+this.center[1]*this.size]);
+    retval = [retval[0]+this.x, retval[1]+this.y]
+    return retval;
+  }
+
   draw() {
-    this.showShape.forEach(value => drawArray(value.map(vector => [vector[0]*this.size+this.x, vector[1]*this.size+this.y])
-      )
-    );
+    // draw ship
+    this.showShape.forEach(value => drawArray(value
+      .map(vector => [vector[0]*this.size+this.x, vector[1]*this.size+this.y])));
+    // draw thrusters fire
     if (this.thrusters) {
       let fireLength = Math.random()*FIRE_LENGTH*this.size;
-      let fireArray = [this.rear, [this.rear[0]-fireLength, this.rear[1]]];
-      fireArray = fireArray
-        .map(value => {
-            value = [value[0]-this.center[0], value[1]-this.center[1]]
-            let x = (value[0]*Math.cos(this.rotation)-value[1]*Math.sin(this.rotation));
-            let y = (value[1]*Math.cos(this.rotation)+value[0]*Math.sin(this.rotation));
-            return [x+this.x, y+this.y]
-          }
-        );
+      let fireArray = [this.rear, [this.rear[0]-fireLength*Math.cos(this.rotation), this.rear[1]-fireLength*Math.sin(this.rotation)]];
       drawArray(fireArray);
     }
+    // draw shots
+    this.shots.forEach(shot => shot.draw());
   }
   update() {
+    super.update();
     this.thrusters = false;
     if (Key.isDown(this.keyUp)) {
       // fire weapon
+      let shotOrigin = this.tip;
+      let now = Date.now();
+      if (now >= this.shotTimeout) {
+        this.shotTimeout = now+SHOT_INTERVAL;
+        this.shots.push(new Shot(...this.tip, this.rotation));
+      }
     };
     if (Key.isDown(this.keyDown)) {
       // fire thrusters
@@ -152,23 +182,61 @@ class Ship extends BaseSprite {
     if (Key.isDown(this.keyLeft) || Key.isDown(this.keyRight)) {
       // rotate ship
       this.rotation += (Key.isDown(this.keyRight)?ROTATION_SPEED:-ROTATION_SPEED)*Math.PI/180
-      this.rotation %= 360;
+      this.rotation %= 2*Math.PI;
       // rotate vectors around center
       this.updateRotation();
     };
-    this.x += this.speedX;
-    this.y += this.speedY;
+    // update shots
+    let removeShots = 0
+    this.shots.forEach((shot, index) => {
+      if (shot.distance > SHOT_DISTANCE) removeShots++;
+      shot.update()
+    });
+    for (let i=0; i<removeShots; i++) {
+      this.shots.shift();
+    }
   }
   updateRotation(angle) {
     if (angle !== undefined) this.rotation = angle;
     this.showShape = this.shape
       .map(value0 => value0
-        .map(value1 => {
-          value1 = [value1[0]-this.center[0], value1[1]-this.center[1]]
-          let x = (value1[0]*Math.cos(this.rotation)-value1[1]*Math.sin(this.rotation));
-          let y = (value1[1]*Math.cos(this.rotation)+value1[0]*Math.sin(this.rotation));
-          return [x, y]
-        }
+        .map(value1 => this.rotateVector(value1)
       ));
+  }
+}
+
+class Shot extends BaseSprite {
+  constructor(x, y, direction) {
+    super(x, y);
+    this.direction = direction;
+    this.speedX = Math.cos(direction)*SHOT_SPEED;
+    this.speedY = Math.sin(direction)*SHOT_SPEED;
+    this.size = SHOT_SIZE;
+    this.distance = 0;
+  }
+  draw() {
+    drawArray([[this.x, this.y], [this.xf, this.yf]]);
+    if (SHOT_DISTANCE-this.distance<=20) {
+      // center of rotation
+      let xc = this.x+Math.cos(this.direction)*this.size/2
+      let yc = this.y+Math.sin(this.direction)*this.size/2
+      // rotate vector
+      let x0 = this.x-xc
+      let y0 = this.y-yc
+      let xr0 = x0*Math.cos(Math.PI/2)-y0*Math.sin(Math.PI/2)+xc;
+      let yr0 = y0*Math.cos(Math.PI/2)+x0*Math.sin(Math.PI/2)+yc;
+      let x1 = this.xf-xc
+      let y1 = this.yf-yc
+      let xr1 = x1*Math.cos(Math.PI/2)-y1*Math.sin(Math.PI/2)+xc;
+      let yr1 = y1*Math.cos(Math.PI/2)+x1*Math.sin(Math.PI/2)+yc;
+      drawArray([[xr0, yr0], [xr1, yr1]])
+      this.size -= 0.5;
+    }
+  }
+  update() {
+    super.update();
+    this.xf = this.x+Math.cos(this.direction)*this.size
+    this.yf = this.y+Math.sin(this.direction)*this.size
+    this.distance += SHOT_SPEED;
   }
 }
