@@ -19,7 +19,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 "use strict";
 
+const ROTATION_SPEED = 3;
+const THRUSTER_SPEED = 0.01;
+const FIRE_LENGTH = 10;
+
 function drawArray(array, width=1, color="#FFF") {
+  array = array.slice();
   // setup style
   Game.context.lineWidth = width;
   Game.context.strokeStyle = color;
@@ -75,4 +80,95 @@ function writeText(x, y, text, size=1, width=1, color="#FFF") {
       });
       lastPosition += finalPosition;
   });
+}
+
+class BaseSprite {
+  constructor(x, y) {
+    this.x = x;
+    this.y = y;
+  }
+  draw() {}
+  update() {}
+}
+
+class Ship extends BaseSprite {
+  constructor(x, y, keys, shape, size) {
+    super(x, y);
+    this.keyUp = keys.keyUp;
+    this.keyDown = keys.keyDown;
+    this.keyLeft = keys.keyLeft;
+    this.keyRight = keys.keyRight;
+    this.shape = shape;
+    this.size = size;
+    this.rotation = 0;
+    this.direction = 0;
+    this.speedX = 0;
+    this.speedY = 0;
+
+    // find centroid
+    let flat = [].concat.apply([], this.shape);
+    let left = Math.min(...flat.map(value => value[0]))
+    let right = Math.max(...flat.map(value => value[0]))
+    let top = Math.min(...flat.map(value => value[1]))
+    let bottom = Math.max(...flat.map(value => value[1]))
+    this.center = [(left+right)/2, (top+bottom)/2];
+    this.rear = [left*this.size+this.center[0], (top+bottom)/2+this.center[1]*this.size];
+    // translate center
+    this.showShape = this.shape
+      .map(value0 => value0
+        .map(value1 => [value1[0]-this.center[0], value1[1]-this.center[1]]
+    ));
+  }
+  draw() {
+    this.showShape.forEach(value => drawArray(value.map(vector => [vector[0]*this.size+this.x, vector[1]*this.size+this.y])
+      )
+    );
+    if (this.thrusters) {
+      let fireLength = Math.random()*FIRE_LENGTH*this.size;
+      let fireArray = [this.rear, [this.rear[0]-fireLength, this.rear[1]]];
+      fireArray = fireArray
+        .map(value => {
+            value = [value[0]-this.center[0], value[1]-this.center[1]]
+            let x = (value[0]*Math.cos(this.rotation)-value[1]*Math.sin(this.rotation));
+            let y = (value[1]*Math.cos(this.rotation)+value[0]*Math.sin(this.rotation));
+            return [x+this.x, y+this.y]
+          }
+        );
+      drawArray(fireArray);
+    }
+  }
+  update() {
+    this.thrusters = false;
+    if (Key.isDown(this.keyUp)) {
+      // fire weapon
+    };
+    if (Key.isDown(this.keyDown)) {
+      // fire thrusters
+      this.thrusters = true;
+      // calculate new velocity vector
+      this.speedX += THRUSTER_SPEED*Math.cos(this.rotation);
+      this.speedY += THRUSTER_SPEED*Math.sin(this.rotation);
+    };
+    if (Key.isDown(this.keyLeft) || Key.isDown(this.keyRight)) {
+      // rotate ship
+      this.rotation += (Key.isDown(this.keyRight)?ROTATION_SPEED:-ROTATION_SPEED)*Math.PI/180
+      this.rotation %= 360;
+      // rotate vectors around center
+      this.updateRotation();
+    };
+    this.x += this.speedX;
+    this.y += this.speedY;
+  }
+  updateRotation(angle) {
+    if (angle !== undefined) this.rotation = angle;
+    this.showShape = this.shape
+      .map(value0 => value0
+        .map(value1 => {
+          value1 = [value1[0]-this.center[0], value1[1]-this.center[1]]
+          let x = (value1[0]*Math.cos(this.rotation)-value1[1]*Math.sin(this.rotation));
+          let y = (value1[1]*Math.cos(this.rotation)+value1[0]*Math.sin(this.rotation));
+          return [x, y]
+        }
+      ));
+  }
 }

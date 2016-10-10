@@ -14,7 +14,8 @@ Since I've already worked on a project to reproduce [PONG](https://armlessjohn40
 * ~~Create the gameloop~~
 * ~~Create rendering functions~~
 * ~~Design board~~
-* Create `ship` class
+* ~~Create `Ship` class~~
+* Create `Shot` class
 * Create `blackhole` sprite
 * Implement gravity mechanics
 * Implement collision mechanics
@@ -92,3 +93,23 @@ With that, I created a function that receives `strings` and writes them in the s
 The board in this game is just some stars in the background. I made the play area round, so I'm drawing a circle to show that. The stars are generated randomly in each round.
 
 ![board design](report-assets/board-design.png "board design")
+
+## 4:20 - `Ship` class
+The ship class is a sprite that has it's own `draw` and `update` methods. They're called in the gameloop. The key bindings were partially done and easy to implement, since I'm using a helper object `Key` in the gameloop. This class ended up bigger than I expected, and I still need to implement somethings that are not ready yet.
+
+The vectors were hand drawn and based on the original game. I changed a little the sprite of `player2`. In the original game it has a slimmer profile, then it's a little harder to hit it.
+```javascript
+let player1Vectors = [
+  [[8, 0], [1, 2], [-1, 2], [-8, 1], [-8, -1], [-1, -2], [1, -2], [8, 0]],
+  [[-1,  2], [-6,  4], [-8,  4], [-5,  1.5]],
+  [[-1, -2], [-6, -4], [-8, -4], [-5, -1.5]]
+]
+```
+
+![ship sprites](report-assets/ship-sprites.png "ship sprites")
+
+It was quite tricky to rotate all the vectors in the sprite around a center. For that I created a method `updateRotation` that have an optional argument `angle` to set the property in the object and perform a rotation around the center of the sprite.
+
+When the thrusters (`keyDown`) are activated, one vector shoots out of the rear of the ships with a random length for each frame. This effect ended up very similar to the original one.
+
+![ship in the game](report-assets/ship-in-the-game.gif "ship in the game")
