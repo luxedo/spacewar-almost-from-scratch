@@ -26,6 +26,7 @@ const SHOT_DISTANCE = 300;
 const SHOT_SPEED = 1;
 const SHOT_SIZE = 5;
 const SHOT_INTERVAL = 500;
+const BLACKHOLE_SIZE = 12;
 
 function drawArray(array, width=1, color="#FFF") {
   array = array.slice();
@@ -51,7 +52,7 @@ function drawCircle(x, y, radius, width=1, color="#FFF") {
   Game.context.stroke();
 }
 
-function drawPoint(x, y, width=2, color="#FFF") {
+function drawPoint(x, y, width=1, color="#FFF") {
   drawArray([[x, y], [x+width, y+width]], width)
 }
 
@@ -90,6 +91,8 @@ class BaseSprite {
   constructor(x, y) {
     this.x = x;
     this.y = y;
+    this.speedX = 0;
+    this.speedY = 0;
   }
   draw() {}
   update() {
@@ -238,5 +241,24 @@ class Shot extends BaseSprite {
     this.xf = this.x+Math.cos(this.direction)*this.size
     this.yf = this.y+Math.sin(this.direction)*this.size
     this.distance += SHOT_SPEED;
+  }
+}
+
+class Blackhole extends BaseSprite {
+  constructor(x, y) {
+    super(x, y);
+  }
+  draw() {
+    let size = Math.random()*BLACKHOLE_SIZE;
+    let angle = Math.random()*Math.PI*2;
+    let x0 = this.x + Math.cos(angle)*size
+    let y0 = this.y + Math.sin(angle)*size
+    let x1 = this.x - Math.cos(angle)*size
+    let y1 = this.y - Math.sin(angle)*size
+    console.log(this.y)
+    drawArray([[x0, y0], [x1, y1]])
+  }
+  update() {
+    super.update();
   }
 }

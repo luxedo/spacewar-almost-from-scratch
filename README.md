@@ -118,3 +118,7 @@ When the thrusters (`keyDown`) are activated, one vector shoots out of the rear 
 The `Shot` class is much simpler than `Ship`. It has just to start somewhere, move in the correct direction and end after a certain distance. It is created when the player presses the `keyUp` in the `Ship` class.
 
 ![shot](report-assets/shot.gif "shot")
+
+## 11:00 - `Blackhole` class
+The blackhole is a simple sprite in the middle of the screen. It generates two random numbers every frame: One for the length of the vector and one for the angle.
+![blackhole](report-assets/blackhole.gif "blackhole")

@@ -58,6 +58,7 @@ gameScreen.init = function () {
   gameScreen.player2 = new Ship(490, 490, player2Keys, player2Vectors, 2);
   gameScreen.player1.updateRotation(Math.PI/4);
   gameScreen.player2.updateRotation(-3*Math.PI/4);
+  gameScreen.blackhole = new Blackhole(Game.width/2, Game.height/2)
 }
 
 gameScreen.draw = function () {
@@ -66,9 +67,11 @@ gameScreen.draw = function () {
   gameScreen.stars.forEach((value) => drawPoint(...value));
   gameScreen.player1.draw();
   gameScreen.player2.draw();
+  gameScreen.blackhole.draw();
 }
 
 gameScreen.update = function () {
   gameScreen.player1.update();
   gameScreen.player2.update();
+  gameScreen.blackhole.update();
 }
