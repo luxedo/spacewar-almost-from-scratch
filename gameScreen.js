@@ -19,7 +19,6 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 "use strict";
 
-const BOARD_RADIUS = 300;
 const STARS = 40;
 const GRAVITY = 50;
 
@@ -54,7 +53,7 @@ gameScreen.init = function () {
   let [xc, yc] = [Game.width/2, Game.height/2]
   while (gameScreen.stars.length < STARS) {
       let [xp, yp] = [Math.random()*Game.width, Math.random()*Game.height]
-      if (Math.sqrt(Math.pow(xp-xc, 2)+Math.pow(yp-yc, 2))<BOARD_RADIUS) {
+      if (Math.sqrt(Math.pow(xp-xc, 2)+Math.pow(yp-yc, 2))<Game.radius) {
         gameScreen.stars.push([xp, yp]);
     }
   }
@@ -68,11 +67,15 @@ gameScreen.init = function () {
 
 gameScreen.draw = function () {
   Game.context.clearRect(0, 0, Game.width, Game.height);
-  drawCircle(Game.width/2, Game.height/2, BOARD_RADIUS)
+  // draw board
+  drawCircle(Game.width/2, Game.height/2, Game.radius)
   gameScreen.stars.forEach((value) => drawPoint(...value));
+  // draw sprites
   gameScreen.player1.draw();
   gameScreen.player2.draw();
   gameScreen.blackhole.draw();
+  // draw mask to hide things outside the border
+  Game.context.drawImage(Game.maskCanvas, 0, 0)
 }
 
 gameScreen.update = function () {
@@ -81,28 +84,13 @@ gameScreen.update = function () {
   gameScreen.blackhole.update();
   addGravity(gameScreen.player1, Game.width/2, Game.height/2, GRAVITY);
   addGravity(gameScreen.player2, Game.width/2, Game.height/2, GRAVITY);
-
-  // black hole collision
-  let player1ToBlackhole = Math.sqrt(Math.pow(gameScreen.player1.x - gameScreen.blackhole.x,2)+
-    Math.pow(gameScreen.player1.y - gameScreen.blackhole.y,2));
-  let player2ToBlackhole = Math.sqrt(Math.pow(gameScreen.player2.x - gameScreen.blackhole.x,2)+
-    Math.pow(gameScreen.player2.y - gameScreen.blackhole.y,2));
-  if (player1ToBlackhole <= BLACKHOLE_SIZE) {
-    let location = Math.random()*Math.PI*2;
-    let x = (BOARD_RADIUS-10)*Math.cos(location)+Game.width/2;
-    let y = (BOARD_RADIUS-10)*Math.sin(location)+Game.height/2;
-    let rotation = Math.random()*Math.PI*2;
-    gameScreen.player1.resetPlayer(x, y, rotation);
-  }
-  if (player2ToBlackhole <= BLACKHOLE_SIZE) {
-    let location = Math.random()*Math.PI*2;
-    let x = (BOARD_RADIUS-10)*Math.cos(location)+Game.width/2;
-    let y = (BOARD_RADIUS-10)*Math.sin(location)+Game.height/2;
-    let rotation = Math.random()*Math.PI*2;
-    gameScreen.player2.resetPlayer(x, y, rotation);
-  }
 }
 
-gameScreen.coordinateInsideBoard = function() {
-
+gameScreen.respawnPlayer = function(player, speedX=false, speedY=false, angle=false) {
+  let location = Math.random()*Math.PI*2;
+  if (angle) location = angle;
+  let x = (Game.radius-10)*Math.cos(location)+Game.width/2;
+  let y = (Game.radius-10)*Math.sin(location)+Game.height/2;
+  let rotation = Math.random()*Math.PI*2;
+  player.resetPlayer(x, y, rotation, speedX, speedY);
 }

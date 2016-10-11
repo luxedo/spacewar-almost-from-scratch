@@ -202,6 +202,7 @@ class Ship extends BaseSprite {
       // rotate vectors around center
       this.updateRotation();
     };
+
     // update shots
     let removeShots = 0
     this.shots.forEach((shot, index) => {
@@ -211,20 +212,35 @@ class Ship extends BaseSprite {
     for (let i=0; i<removeShots; i++) {
       this.shots.shift();
     }
+
+    // black hole collision
+    let playerToBlackhole = Math.sqrt(Math.pow(this.x - gameScreen.blackhole.x, 2)+
+      Math.pow(this.y - gameScreen.blackhole.y, 2));
+    if (playerToBlackhole <= BLACKHOLE_SIZE) gameScreen.respawnPlayer(this, 0, 0);
+
+    // border collision
+    let playerToBorder = Game.radius - Math.sqrt(Math.pow(this.x -
+      Game.width/2,2) + Math.pow(this.y - Game.height/2, 2));
+    if (playerToBorder <= 0) {
+      let angle = Math.atan2(this.y-Game.height/2, this.x-Game.width/2)+Math.PI;
+      let x = (Game.radius-10)*Math.cos(angle)+Game.width/2;
+      let y = (Game.radius-10)*Math.sin(angle)+Game.height/2;
+      this.resetPlayer(x, y);
+    }
   }
   updateRotation(angle) {
-    if (angle !== undefined) this.rotation = angle;
+    if (!isNaN(parseFloat(angle)) && isFinite(angle)) this.rotation = angle;
     this.showShape = this.shape
       .map(value0 => value0
         .map(value1 => this.rotateVector(value1)
       ));
   }
-  resetPlayer(x, y, rotation=0) {
-    this.speedX = 0;
-    this.speedY = 0;
+  resetPlayer(x, y, rotation=false, speedX=false, speedY=false) {
+    if (!isNaN(parseFloat(speedX)) && isFinite(speedX)) this.speedX = speedX;
+    if (!isNaN(parseFloat(speedY)) && isFinite(speedY)) this.speedY = speedY;
+    if (!isNaN(parseFloat(rotation)) && isFinite(rotation)) this.updateRotation(rotation);
     this.x = x;
     this.y = y;
-    this.updateRotation(rotation);
   }
 }
 

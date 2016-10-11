@@ -38,7 +38,8 @@ window.addEventListener("keydown", (event) => {
 let Game = {
   fps: 60,
   width: 600,
-  height: 600
+  height: 600,
+  radius: 300
 };
 
 // Screens objects
@@ -61,10 +62,21 @@ Game.start = function() {
   Game.canvas.setAttribute("id", "game");
   Game.canvas.width = Game.width;
   Game.canvas.height = Game.height;
-
+  Game.context = Game.canvas.getContext("2d"); // Get canvas context
   document.getElementById("game-frame").appendChild(Game.canvas); // Add canvas to game-frame
 
-  Game.context = Game.canvas.getContext("2d"); // Get canvas context
+  // mask outside border
+  Game.maskCanvas = document.createElement("canvas"); // Create canvas
+  Game.maskCanvas.setAttribute("id", "game-mask");
+  Game.maskCanvas.width = Game.width;
+  Game.maskCanvas.height = Game.height;
+  Game.maskContext = Game.maskCanvas.getContext("2d"); // Get canvas context
+  Game.maskContext.fillRect(0, 0, Game.width, Game.height);
+  Game.maskContext.globalCompositeOperation = "xor"
+  Game.maskContext.arc(Game.width/2, Game.height/2, Game.radius+1, 0, 2*Math.PI);
+  Game.maskContext.fill();
+
+  // run loop
   Game.changeState(gameScreen)
   Game._onEachFrame(Game.run);
 };

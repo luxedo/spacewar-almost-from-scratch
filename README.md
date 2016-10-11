@@ -19,8 +19,8 @@ Since I've already worked on a project to reproduce [PONG](https://armlessjohn40
 * ~~Create `blackhole` sprite~~
 * ~~Implement gravity mechanics~~
 * Implement collision mechanics
-  * Collision with the black hole
-  * Collision with the borders
+  ~~* Collision with the black hole~~
+  ~~* Collision with the borders~~
   * Collision between Ships
   * Collision between Shots
   * Collision Ship-Shots
@@ -150,3 +150,5 @@ function addGravity(element, cx, cy, gravity) {
 ## Implement collision mechanics
 ### 11:35 - Collision with the black hole
 The black hole spawns any Ship that reaches its position to a random position in the board with `speed=0`.
+### 12:20 - Collision with the borders
+The game board wraps around itself, making it infinite. So, whenever a player or shot reaches the borders, they're spawned back in the other side of the board.
