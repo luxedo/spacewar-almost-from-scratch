@@ -49,12 +49,9 @@ const player2Vectors = [
 gameScreen.init = function () {
   // Setup background
   gameScreen.stars = []
-  let [xc, yc] = [Game.width/2, Game.height/2]
   while (gameScreen.stars.length < STARS) {
-    let [xp, yp] = [Math.random()*Game.width, Math.random()*Game.height]
-    if (Math.sqrt(Math.pow(xp-xc, 2)+Math.pow(yp-yc, 2))<RADIUS) {
-      gameScreen.stars.push([xp, yp]);
-    }
+    let coordinate = gameScreen.coordinateInsideBoard();
+    gameScreen.stars.push(coordinate);
   }
   // Create players
   gameScreen.player1 = new Ship(110, 110, player1Keys, player1Vectors, 2);
@@ -79,4 +76,34 @@ gameScreen.update = function () {
   gameScreen.blackhole.update();
   addGravity(gameScreen.player1, Game.width/2, Game.height/2, GRAVITY);
   addGravity(gameScreen.player2, Game.width/2, Game.height/2, GRAVITY);
+
+  // black hole collision
+  let player1ToBlackhole = Math.sqrt(Math.pow(gameScreen.player1.x - gameScreen.blackhole.x,2)+
+    Math.pow(gameScreen.player1.y - gameScreen.blackhole.y,2));
+  let player2ToBlackhole = Math.sqrt(Math.pow(gameScreen.player2.x - gameScreen.blackhole.x,2)+
+    Math.pow(gameScreen.player2.y - gameScreen.blackhole.y,2));
+  if (player1ToBlackhole <= BLACKHOLE_SIZE) {
+    let [x, y] = gameScreen.coordinateInsideBoard();
+    gameScreen.player1.speedX = 0;
+    gameScreen.player1.speedY = 0;
+    gameScreen.player1.x = x;
+    gameScreen.player1.y = y;
+  }
+  if (player2ToBlackhole <= BLACKHOLE_SIZE) {
+    let [x, y] = gameScreen.coordinateInsideBoard();
+    gameScreen.player2.speedX = 0;
+    gameScreen.player2.speedY = 0;
+    gameScreen.player2.x = x;
+    gameScreen.player2.y = y;
+  }
+}
+
+gameScreen.coordinateInsideBoard = function() {
+  let [xc, yc] = [Game.width/2, Game.height/2]
+  while (true) {
+    let [xp, yp] = [Math.random()*Game.width, Math.random()*Game.height]
+    if (Math.sqrt(Math.pow(xp-xc, 2)+Math.pow(yp-yc, 2))<RADIUS) {
+      return [xp, yp];
+    }
+  }
 }

@@ -19,6 +19,11 @@ Since I've already worked on a project to reproduce [PONG](https://armlessjohn40
 * ~~Create `blackhole` sprite~~
 * ~~Implement gravity mechanics~~
 * Implement collision mechanics
+  * Collision with the black hole
+  * Collision with the borders
+  * Collision between Ships
+  * Collision between Shots
+  * Collision Ship-Shots
 * Create gameover screen
 * Create start screen
 * Create credits screen
@@ -141,3 +146,7 @@ function addGravity(element, cx, cy, gravity) {
 ```
 
 ![gravity](report-assets/gravity.gif "gravity")
+
+## Implement collision mechanics
+### 11:35 - Collision with the black hole
+The black hole spawns any Ship that reaches its position to a random position in the board with `speed=0`.
