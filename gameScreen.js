@@ -18,26 +18,29 @@ You should have received a copy of the GNU General Public License
 along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 "use strict";
+
 const RADIUS = 300;
 const STARS = 40;
-let player1Keys = {
+const GRAVITY = 50;
+
+const player1Keys = {
   keyUp: 87,
   keyDown: 83,
   keyLeft: 65,
   keyRight: 68,
 };
-let player2Keys = {
+const player2Keys = {
   keyUp: 38,
   keyDown: 40,
   keyLeft: 37,
   keyRight: 39,
 };
-let player1Vectors = [
+const player1Vectors = [
   [[8, 0], [1, 2], [-1, 2], [-8, 1], [-8, -1], [-1, -2], [1, -2], [8, 0]],
   [[-1,  2], [-6,  4], [-8,  4], [-5,  1.5]],
   [[-1, -2], [-6, -4], [-8, -4], [-5, -1.5]]
 ];
-let player2Vectors = [
+const player2Vectors = [
   [[8, 0], [1, 2], [-8, 2], [-8, -2], [1, -2], [8, 0]],
   [[-1,  2], [-6,  4], [-8,  4], [-8, 2]],
   [[-1, -2], [-6, -4], [-8, -4], [-8, -2]]
@@ -74,4 +77,6 @@ gameScreen.update = function () {
   gameScreen.player1.update();
   gameScreen.player2.update();
   gameScreen.blackhole.update();
+  addGravity(gameScreen.player1, Game.width/2, Game.height/2, GRAVITY);
+  addGravity(gameScreen.player2, Game.width/2, Game.height/2, GRAVITY);
 }

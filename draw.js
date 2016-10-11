@@ -27,6 +27,7 @@ const SHOT_SPEED = 1;
 const SHOT_SIZE = 5;
 const SHOT_INTERVAL = 500;
 const BLACKHOLE_SIZE = 12;
+const MAXACCEL = 1;
 
 function drawArray(array, width=1, color="#FFF") {
   array = array.slice();
@@ -53,7 +54,7 @@ function drawCircle(x, y, radius, width=1, color="#FFF") {
 }
 
 function drawPoint(x, y, width=1, color="#FFF") {
-  drawArray([[x, y], [x+width, y+width]], width)
+  drawArray([[x, y], [x+width, y+width]], width+1)
 }
 
 function parseLetter(letter) {
@@ -85,6 +86,18 @@ function writeText(x, y, text, size=1, width=1, color="#FFF") {
       });
       lastPosition += finalPosition;
   });
+}
+
+function addGravity(element, cx, cy, gravity) {
+  // F = Gm1m2/r^2 = gravity/r^2
+  let dx = element.x-cx;
+  let dy = element.y-cy;
+  let F = gravity/(Math.pow(dx, 2)+Math.pow(dy, 2));
+  let angle = Math.atan2(dx, dy)
+  let fx = -F*Math.cos(angle);
+  let fy = -F*Math.sin(angle);
+  element.speedX += (fx<MAXACCEL?fx:MAXACCEL);
+  element.speedY += (fy<MAXACCEL?fy:MAXACCEL);
 }
 
 class BaseSprite {
@@ -255,7 +268,6 @@ class Blackhole extends BaseSprite {
     let y0 = this.y + Math.sin(angle)*size
     let x1 = this.x - Math.cos(angle)*size
     let y1 = this.y - Math.sin(angle)*size
-    console.log(this.y)
     drawArray([[x0, y0], [x1, y1]])
   }
   update() {

@@ -16,8 +16,8 @@ Since I've already worked on a project to reproduce [PONG](https://armlessjohn40
 * ~~Design board~~
 * ~~Create `Ship` class~~
 * ~~Create `Shot` class~~
-* Create `blackhole` sprite
-* Implement gravity mechanics
+* ~~Create `blackhole` sprite~~
+* ~~Implement gravity mechanics~~
 * Implement collision mechanics
 * Create gameover screen
 * Create start screen
@@ -121,4 +121,23 @@ The `Shot` class is much simpler than `Ship`. It has just to start somewhere, mo
 
 ## 11:00 - `Blackhole` class
 The blackhole is a simple sprite in the middle of the screen. It generates two random numbers every frame: One for the length of the vector and one for the angle.
+
 ![blackhole](report-assets/blackhole.gif "blackhole")
+
+## 11:20 - Add gravity mechanics
+A function was created to handle the gravity mechanics. It's called in the gameloop's update method passing the `Ship` instances, the center of pull an the gravity as arguments.
+```javascript
+function addGravity(element, cx, cy, gravity) {
+  // F = Gm1m2/r^2 = gravity/r^2
+  let dx = element.x-cx;
+  let dy = element.y-cy;
+  let F = gravity/(Math.pow(dx, 2)+Math.pow(dy, 2));
+  let angle = Math.atan2(dx, dy)
+  let fx = -F*Math.cos(angle);
+  let fy = -F*Math.sin(angle);
+  element.speedX += (fx<MAXACCEL?fx:MAXACCEL);
+  element.speedY += (fy<MAXACCEL?fy:MAXACCEL);
+}
+```
+
+![gravity](report-assets/gravity.gif "gravity")
