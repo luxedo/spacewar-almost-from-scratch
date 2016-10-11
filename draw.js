@@ -93,7 +93,7 @@ function addGravity(element, cx, cy, gravity) {
   let dx = element.x-cx;
   let dy = element.y-cy;
   let F = gravity/(Math.pow(dx, 2)+Math.pow(dy, 2));
-  let angle = Math.atan2(dx, dy)
+  let angle = Math.atan2(dy, dx)
   let fx = -F*Math.cos(angle);
   let fy = -F*Math.sin(angle);
   element.speedX += (fx<MAXACCEL?fx:MAXACCEL);
@@ -218,6 +218,13 @@ class Ship extends BaseSprite {
       .map(value0 => value0
         .map(value1 => this.rotateVector(value1)
       ));
+  }
+  resetPlayer(x, y, rotation=0) {
+    this.speedX = 0;
+    this.speedY = 0;
+    this.x = x;
+    this.y = y;
+    this.updateRotation(rotation);
   }
 }
 

@@ -19,10 +19,12 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 "use strict";
 
-const RADIUS = 300;
+const BOARD_RADIUS = 300;
 const STARS = 40;
 const GRAVITY = 50;
 
+const p1Spawn = [100, 100];
+const p2Spawn = [500, 500];
 const player1Keys = {
   keyUp: 87,
   keyDown: 83,
@@ -49,13 +51,16 @@ const player2Vectors = [
 gameScreen.init = function () {
   // Setup background
   gameScreen.stars = []
+  let [xc, yc] = [Game.width/2, Game.height/2]
   while (gameScreen.stars.length < STARS) {
-    let coordinate = gameScreen.coordinateInsideBoard();
-    gameScreen.stars.push(coordinate);
+      let [xp, yp] = [Math.random()*Game.width, Math.random()*Game.height]
+      if (Math.sqrt(Math.pow(xp-xc, 2)+Math.pow(yp-yc, 2))<BOARD_RADIUS) {
+        gameScreen.stars.push([xp, yp]);
+    }
   }
   // Create players
-  gameScreen.player1 = new Ship(110, 110, player1Keys, player1Vectors, 2);
-  gameScreen.player2 = new Ship(490, 490, player2Keys, player2Vectors, 2);
+  gameScreen.player1 = new Ship(...p1Spawn, player1Keys, player1Vectors, 2);
+  gameScreen.player2 = new Ship(...p2Spawn, player2Keys, player2Vectors, 2);
   gameScreen.player1.updateRotation(Math.PI/4);
   gameScreen.player2.updateRotation(-3*Math.PI/4);
   gameScreen.blackhole = new Blackhole(Game.width/2, Game.height/2)
@@ -63,7 +68,7 @@ gameScreen.init = function () {
 
 gameScreen.draw = function () {
   Game.context.clearRect(0, 0, Game.width, Game.height);
-  drawCircle(Game.width/2, Game.height/2, RADIUS)
+  drawCircle(Game.width/2, Game.height/2, BOARD_RADIUS)
   gameScreen.stars.forEach((value) => drawPoint(...value));
   gameScreen.player1.draw();
   gameScreen.player2.draw();
@@ -83,27 +88,21 @@ gameScreen.update = function () {
   let player2ToBlackhole = Math.sqrt(Math.pow(gameScreen.player2.x - gameScreen.blackhole.x,2)+
     Math.pow(gameScreen.player2.y - gameScreen.blackhole.y,2));
   if (player1ToBlackhole <= BLACKHOLE_SIZE) {
-    let [x, y] = gameScreen.coordinateInsideBoard();
-    gameScreen.player1.speedX = 0;
-    gameScreen.player1.speedY = 0;
-    gameScreen.player1.x = x;
-    gameScreen.player1.y = y;
+    let location = Math.random()*Math.PI*2;
+    let x = (BOARD_RADIUS-10)*Math.cos(location)+Game.width/2;
+    let y = (BOARD_RADIUS-10)*Math.sin(location)+Game.height/2;
+    let rotation = Math.random()*Math.PI*2;
+    gameScreen.player1.resetPlayer(x, y, rotation);
   }
   if (player2ToBlackhole <= BLACKHOLE_SIZE) {
-    let [x, y] = gameScreen.coordinateInsideBoard();
-    gameScreen.player2.speedX = 0;
-    gameScreen.player2.speedY = 0;
-    gameScreen.player2.x = x;
-    gameScreen.player2.y = y;
+    let location = Math.random()*Math.PI*2;
+    let x = (BOARD_RADIUS-10)*Math.cos(location)+Game.width/2;
+    let y = (BOARD_RADIUS-10)*Math.sin(location)+Game.height/2;
+    let rotation = Math.random()*Math.PI*2;
+    gameScreen.player2.resetPlayer(x, y, rotation);
   }
 }
 
 gameScreen.coordinateInsideBoard = function() {
-  let [xc, yc] = [Game.width/2, Game.height/2]
-  while (true) {
-    let [xp, yp] = [Math.random()*Game.width, Math.random()*Game.height]
-    if (Math.sqrt(Math.pow(xp-xc, 2)+Math.pow(yp-yc, 2))<RADIUS) {
-      return [xp, yp];
-    }
-  }
+
 }
