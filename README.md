@@ -22,7 +22,7 @@ Since I've already worked on a project to reproduce [PONG](https://armlessjohn40
   ~~* Collision with the black hole~~
   ~~* Collision with the borders~~
   ~~* Collision between Ships~~
-  * Collision between Shots
+  ~~* Collision between Shots~~
   * Collision Ship-Shots
 * Create gameover screen
 * Create start screen
@@ -187,3 +187,6 @@ checkCollision = function(sprite1, sprite2) {
 I also created an `explode` method in the `Ship` class so when they collide, it shows a satisfying explosion. The explosion have 4 frames of dots generated randomly with varying radius.
 
 ![explosion](report-assets/explosion.gif "explosion")
+
+### 15:00 - Collision between Shots
+The shots uses the same check Collision function and two nested loops to iterate over the shots array. To destroy the shot after a collision, I set the property `distance` to be close to it's maximum distance, then it's automatically destroyed in the `Ship` update method.

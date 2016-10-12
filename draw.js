@@ -142,6 +142,12 @@ class BaseSprite {
     let rotation = Math.random()*Math.PI*2;
     this.resetSprite(x, y, rotation, speedX, speedY);
   }
+  rotateVector(vector) {
+    vector = [vector[0]-this.center[0], vector[1]-this.center[1]];
+    let x = (vector[0]*Math.cos(this.rotation)-vector[1]*Math.sin(this.rotation));
+    let y = (vector[1]*Math.cos(this.rotation)+vector[0]*Math.sin(this.rotation));
+    return [x, y]
+  }
 }
 
 class Ship extends BaseSprite {
@@ -174,13 +180,6 @@ class Ship extends BaseSprite {
         .map(value1 => [value1[0]-this.center[0], value1[1]-this.center[1]]
     ));
   }
-  rotateVector(vector) {
-    vector = [vector[0]-this.center[0], vector[1]-this.center[1]];
-    let x = (vector[0]*Math.cos(this.rotation)-vector[1]*Math.sin(this.rotation));
-    let y = (vector[1]*Math.cos(this.rotation)+vector[0]*Math.sin(this.rotation));
-    return [x, y]
-  }
-
   get rear() {
     let retval = this.rotateVector([this.left*this.size+this.center[0], (this.top+this.bottom)/2+this.center[1]*this.size]);
     retval = [retval[0]+this.x, retval[1]+this.y]
@@ -244,14 +243,12 @@ class Ship extends BaseSprite {
     };
 
     // update shots
-    let removeShots = 0
+    let removeShots = []
     this.shots.forEach((shot, index) => {
-      if (shot.distance > SHOT_DISTANCE) removeShots++;
+      if (shot.distance > SHOT_DISTANCE) removeShots.push(shot);
       shot.update()
     });
-    for (let i=0; i<removeShots; i++) {
-      this.shots.shift();
-    }
+    removeShots.forEach(val => this.shots.splice(val, 1));
 
     // black hole collision
     let playerToBlackhole = Math.sqrt(Math.pow(this.x - gameScreen.blackhole.x, 2)+
@@ -297,28 +294,27 @@ class Shot extends BaseSprite {
   constructor(x, y, direction) {
     super(x, y);
     this.direction = direction;
+    this.rotation = direction;
+    this.center = [0, 0];
     this.speedX = Math.cos(direction)*SHOT_SPEED;
     this.speedY = Math.sin(direction)*SHOT_SPEED;
     this.size = SHOT_SIZE;
+
     this.distance = 0;
+  }
+  get corners() {
+    let lt = this.rotateVector([-1, 3]);
+    let rt = this.rotateVector([1, 3]);
+    let lb = this.rotateVector([-1, -3]);
+    let rb = this.rotateVector([1, -3]);
+
+    let retval = [lt, rt, lb, rb].map(value => [value[0]+this.x, value[1]+this.y])
+    return retval;
   }
   draw() {
     drawArray([[this.x, this.y], [this.xf, this.yf]]);
     if (SHOT_DISTANCE-this.distance<=20) {
-      // center of rotation
-      let xc = this.x+Math.cos(this.direction)*this.size/2
-      let yc = this.y+Math.sin(this.direction)*this.size/2
-      // rotate vector
-      let x0 = this.x-xc
-      let y0 = this.y-yc
-      let xr0 = x0*Math.cos(Math.PI/2)-y0*Math.sin(Math.PI/2)+xc;
-      let yr0 = y0*Math.cos(Math.PI/2)+x0*Math.sin(Math.PI/2)+yc;
-      let x1 = this.xf-xc
-      let y1 = this.yf-yc
-      let xr1 = x1*Math.cos(Math.PI/2)-y1*Math.sin(Math.PI/2)+xc;
-      let yr1 = y1*Math.cos(Math.PI/2)+x1*Math.sin(Math.PI/2)+yc;
-      drawArray([[xr0, yr0], [xr1, yr1]])
-      this.size -= 0.5;
+      this.explode()
     }
   }
   update() {
@@ -326,6 +322,22 @@ class Shot extends BaseSprite {
     this.xf = this.x+Math.cos(this.direction)*this.size
     this.yf = this.y+Math.sin(this.direction)*this.size
     this.distance += SHOT_SPEED;
+  }
+  explode() {
+    // center of rotation
+    let xc = this.x+Math.cos(this.direction)*this.size/2
+    let yc = this.y+Math.sin(this.direction)*this.size/2
+    // rotate vector
+    let x0 = this.x-xc
+    let y0 = this.y-yc
+    let xr0 = x0*Math.cos(Math.PI/2)-y0*Math.sin(Math.PI/2)+xc;
+    let yr0 = y0*Math.cos(Math.PI/2)+x0*Math.sin(Math.PI/2)+yc;
+    let x1 = this.xf-xc
+    let y1 = this.yf-yc
+    let xr1 = x1*Math.cos(Math.PI/2)-y1*Math.sin(Math.PI/2)+xc;
+    let yr1 = y1*Math.cos(Math.PI/2)+x1*Math.sin(Math.PI/2)+yc;
+    drawArray([[xr0, yr0], [xr1, yr1]])
+    this.size -= 0.5;
   }
 }
 

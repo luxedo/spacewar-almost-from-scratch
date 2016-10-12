@@ -61,8 +61,8 @@ gameScreen.init = function () {
   // Create players
   gameScreen.player1 = new Ship(...p1Spawn, player1Keys, player1Vectors, 1.5);
   gameScreen.player2 = new Ship(...p2Spawn, player2Keys, player2Vectors, 1.5);
-  gameScreen.player1.updateRotation(Math.PI/4);
-  gameScreen.player2.updateRotation(-3*Math.PI/4);
+  gameScreen.player1.updateRotation(5*Math.PI/4);
+  gameScreen.player2.updateRotation(Math.PI/4);
   gameScreen.blackhole = new Blackhole(Game.width/2, Game.height/2)
 }
 
@@ -87,9 +87,19 @@ gameScreen.update = function () {
   // addGravity(gameScreen.player2, Game.width/2, Game.height/2, GRAVITY);
 
   //check for players collision
-  if (gameScreen.checkCollision(gameScreen.player1, gameScreen.player2)) {
-    gameScreen.player1.explode();
-    gameScreen.player2.explode();
+  // if (gameScreen.checkCollision(gameScreen.player1, gameScreen.player2)) {
+  //   gameScreen.player1.explode();
+  //   gameScreen.player2.explode();
+  // }
+  for (let i=0; i<gameScreen.player1.shots.length; i++) {
+    for (let j=0; j<gameScreen.player2.shots.length; j++) {
+      let shot1 = gameScreen.player1.shots[i];
+      let shot2 = gameScreen.player2.shots[j];
+      if (gameScreen.checkCollision(shot1, shot2)) {
+        shot1.distance = SHOT_DISTANCE - 10;
+        shot2.distance = SHOT_DISTANCE - 10;
+      }
+    }
   }
 }
 
@@ -121,6 +131,7 @@ gameScreen.checkCollision = function(sprite1, sprite2) {
   const p2top = Math.min(...p2cTR.map(value => value[1]))
   const p2bottom = Math.max(...p2cTR.map(value => value[1]))
   // Check if shadows overlap in both axes
+  // console.log(p1left, p1right, p1top, p1bottom, p2left, p2right, p2top, p2bottom);
   if (p2left < p1right && p1left < p2right && p2top < p1bottom && p1top < p2bottom) return true;
   return false;
 }
