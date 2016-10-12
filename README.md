@@ -18,12 +18,12 @@ Since I've already worked on a project to reproduce [PONG](https://armlessjohn40
 * ~~Create `Shot` class~~
 * ~~Create `blackhole` sprite~~
 * ~~Implement gravity mechanics~~
-* Implement collision mechanics
+~~* Implement collision mechanics~~
   ~~* Collision with the black hole~~
   ~~* Collision with the borders~~
   ~~* Collision between Ships~~
   ~~* Collision between Shots~~
-  * Collision Ship-Shots
+  ~~* Collision Ship-Shots~~
 * Create gameover screen
 * Create start screen
 * Create credits screen
@@ -152,7 +152,7 @@ function addGravity(element, cx, cy, gravity) {
 The black hole spawns any Ship that reaches its position to a random position in the board with `speed=0`. This is checked in the object's update method.
 ### 12:20 - Collision with the borders
 The game board wraps around itself, making it infinite. So, whenever a player or shot reaches the borders, they're spawned back in the other side of the board. This also happens for the `Shot` class. The collision is checked in the object's update method.
-### 14:00 - Collision between Ships
+### 14:00 - Collision between `Ships`
 When the two players collide, there is an explosion and the game should end. This check is made in the gameloop's update method.
 The collision is calculated using [Separating Axis Theorem](https://en.wikipedia.org/wiki/Hyperplane_separation_theorem). It ended up in a function with 15 constants and a single if statement to tell whether the ships have collided.
 
@@ -188,5 +188,8 @@ I also created an `explode` method in the `Ship` class so when they collide, it 
 
 ![explosion](report-assets/explosion.gif "explosion")
 
-### 15:00 - Collision between Shots
+### 15:00 - Collision between `Shots`
 The shots uses the same check Collision function and two nested loops to iterate over the shots array. To destroy the shot after a collision, I set the property `distance` to be close to it's maximum distance, then it's automatically destroyed in the `Ship` update method.
+
+### 15:10 - Collision between `Ships` and `Shots`
+Since all the functions methods for collision were ready, it was quite easy to calculate the collision between `Ships` and `Shots`. It took 5 minutes to do so.

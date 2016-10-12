@@ -86,18 +86,18 @@ gameScreen.update = function () {
   // addGravity(gameScreen.player1, Game.width/2, Game.height/2, GRAVITY);
   // addGravity(gameScreen.player2, Game.width/2, Game.height/2, GRAVITY);
 
-  //check for players collision
-  // if (gameScreen.checkCollision(gameScreen.player1, gameScreen.player2)) {
-  //   gameScreen.player1.explode();
-  //   gameScreen.player2.explode();
-  // }
-  for (let i=0; i<gameScreen.player1.shots.length; i++) {
-    for (let j=0; j<gameScreen.player2.shots.length; j++) {
-      let shot1 = gameScreen.player1.shots[i];
-      let shot2 = gameScreen.player2.shots[j];
-      if (gameScreen.checkCollision(shot1, shot2)) {
-        shot1.distance = SHOT_DISTANCE - 10;
-        shot2.distance = SHOT_DISTANCE - 10;
+  // check for collision
+  let collisionArr1 = gameScreen.player1.shots.slice()
+  collisionArr1.push(gameScreen.player1)
+  let collisionArr2 = gameScreen.player2.shots.slice()
+  collisionArr2.push(gameScreen.player2)
+  for (let i=0; i<collisionArr1.length; i++) {
+    for (let j=0; j<collisionArr2.length; j++) {
+      let sprite1 = collisionArr1[i];
+      let sprite2 = collisionArr2[j];
+      if (gameScreen.checkCollision(sprite1, sprite2)) {
+        sprite1.explode();
+        sprite2.explode();
       }
     }
   }

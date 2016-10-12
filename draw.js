@@ -215,33 +215,33 @@ class Ship extends BaseSprite {
     this.shots.forEach(shot => shot.draw());
   }
   update() {
-    if (this.dead) return;
     super.update();
     this.thrusters = false;
-    if (Key.isDown(this.keyUp)) {
-      // fire weapon
-      let shotOrigin = this.tip;
-      let now = Date.now();
-      if (now >= this.shotTimeout) {
-        this.shotTimeout = now+SHOT_INTERVAL;
-        this.shots.push(new Shot(...this.tip, this.rotation));
-      }
-    };
-    if (Key.isDown(this.keyDown)) {
-      // fire thrusters
-      this.thrusters = true;
-      // calculate new velocity vector
-      this.speedX += THRUSTER_SPEED*Math.cos(this.rotation);
-      this.speedY += THRUSTER_SPEED*Math.sin(this.rotation);
-    };
-    if (Key.isDown(this.keyLeft) || Key.isDown(this.keyRight)) {
-      // rotate ship
-      this.rotation += (Key.isDown(this.keyRight)?ROTATION_SPEED:-ROTATION_SPEED)*Math.PI/180
-      this.rotation %= 2*Math.PI;
-      // rotate vectors around center
-      this.updateRotation();
-    };
-
+    if (!this.dead) {
+      if (Key.isDown(this.keyUp)) {
+        // fire weapon
+        let shotOrigin = this.tip;
+        let now = Date.now();
+        if (now >= this.shotTimeout) {
+          this.shotTimeout = now+SHOT_INTERVAL;
+          this.shots.push(new Shot(...this.tip, this.rotation));
+        }
+      };
+      if (Key.isDown(this.keyDown)) {
+        // fire thrusters
+        this.thrusters = true;
+        // calculate new velocity vector
+        this.speedX += THRUSTER_SPEED*Math.cos(this.rotation);
+        this.speedY += THRUSTER_SPEED*Math.sin(this.rotation);
+      };
+      if (Key.isDown(this.keyLeft) || Key.isDown(this.keyRight)) {
+        // rotate ship
+        this.rotation += (Key.isDown(this.keyRight)?ROTATION_SPEED:-ROTATION_SPEED)*Math.PI/180
+        this.rotation %= 2*Math.PI;
+        // rotate vectors around center
+        this.updateRotation();
+      };
+    }
     // update shots
     let removeShots = []
     this.shots.forEach((shot, index) => {
@@ -314,7 +314,7 @@ class Shot extends BaseSprite {
   draw() {
     drawArray([[this.x, this.y], [this.xf, this.yf]]);
     if (SHOT_DISTANCE-this.distance<=20) {
-      this.explode()
+      this._explode()
     }
   }
   update() {
@@ -324,6 +324,9 @@ class Shot extends BaseSprite {
     this.distance += SHOT_SPEED;
   }
   explode() {
+    this.distance = SHOT_DISTANCE - 10;
+  }
+  _explode() {
     // center of rotation
     let xc = this.x+Math.cos(this.direction)*this.size/2
     let yc = this.y+Math.sin(this.direction)*this.size/2
