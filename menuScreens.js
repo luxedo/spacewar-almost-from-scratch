@@ -19,13 +19,44 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 "use strict";
 
-const positions = [[180, 360], [230, 410]]
+const gameOverPositions = [[180, 360], [230, 410]]
+const startScreenPositions = [[190, 310], [190, 360], [200, 410]]
 
+startScreen.init = function() {
+  startScreen.stars = gameScreen.makeStars()
+  startScreen.arrow = new ShipCursor(startScreenPositions, player1Vectors, 3);
+}
+startScreen.draw = function() {
+  Game.context.clearRect(0, 0, Game.width, Game.height);
+  startScreen.stars.forEach((value) => drawPoint(...value));
+  // draw board
+  drawCircle(Game.width/2, Game.height/2, Game.radius)
+
+  startScreen.arrow.draw()
+  writeCentered(100, "SPACEWAR", 5);
+  writeCentered(200, "almost from scratch", 3);
+  writeCentered(300, "1p start", 2);
+  writeCentered(350, "2p start", 2);
+  writeCentered(400, "credits", 2);
+  writeCentered(510, "'wasd' - player 1         arrows - player 2");
+  writeCentered(530, "enter - go              esc - go back");
+  writeCentered(570, VERSION);
+}
+startScreen.update = function() {
+  startScreen.arrow.update()
+  if (Key.isDown(13)) {
+    if (Game.keyTimeout > Date.now()) return
+    Game.keyTimeout = Date.now()+200;
+    // Game.blip4();
+    if (startScreen.arrow.current === 0) Game.changeState(gameScreen);
+    else if (startScreen.arrow.current === 1) Game.changeState(gameScreen);
+    else if (startScreen.arrow.current === 2) Game.changeState(gameScreen);
+  }
+}
 
 gameOverScreen.init = function() {
   gameOverScreen.stars = gameScreen.makeStars()
-  gameOverScreen.arrow = new ShipCursor(positions, player1Vectors, 3);
-  gameOverScreen.arrow.dead = true;
+  gameOverScreen.arrow = new ShipCursor(gameOverPositions, player1Vectors, 3);
 }
 gameOverScreen.draw = function() {
   Game.context.clearRect(0, 0, Game.width, Game.height);
@@ -47,10 +78,9 @@ gameOverScreen.update = function() {
     Game.keyTimeout = Date.now()+200;
     // Game.blip4();
     if (gameOverScreen.arrow.current === 0) Game.changeState(gameScreen);
-    else if (gameOverScreen.arrow.current === 1) {
-    }
+    else if (gameOverScreen.arrow.current === 1) Game.changeState(startScreen);
   } else if (Key.isDown(27)) {
     // Game.blip4();
-    // Game.changeState(startScreen)
+    Game.changeState(gameScreen);
   }
 }

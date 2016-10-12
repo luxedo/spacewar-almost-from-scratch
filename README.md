@@ -25,7 +25,7 @@ Since I've already worked on a project to reproduce [PONG](https://armlessjohn40
   ~~* Collision between Shots~~
   ~~* Collision Ship-Shots~~
 ~~* Create game over screen~~
-* Create start screen
+~~* Create start screen~~
 * Create credits screen
 * Create enemy AI
 * Add sounds
@@ -194,9 +194,14 @@ The shots uses the same check Collision function and two nested loops to iterate
 ### 15:10 - Collision between `Ships` and `Shots`
 Since all the functions methods for collision were ready, it was quite easy to calculate the collision between `Ships` and `Shots`. It took 5 minutes to do so.
 
-### 16:00 - Game over screen
-When one ship is destroyed, the player goes to the Game Over screen. This check is made in the end of the update method in the gameloop, if any player has the property `dead` then the `Game.changeState` method is called after a timeout leading to the Game Over screen.
+## 16:10 - Game over screen
+When one ship is destroyed, the player goes to the `Game Over screen`. This check is made in the end of the update method in the gameloop, if any player has the property `dead` then the `Game.changeState` method is called after a timeout leading to the `Game Over screen`.
 
 ![game over](report-assets/game-over.gif "game over")
 
 The code for the cursor is basically an extended `Ship` class that has the functionalities of `Cursor` class in my [PONG](https://armlessjohn404.github.io/pong-almost-from-scratch/) game.
+
+## 16:40 - Start screen
+The `Start screen` copies a lot of code from `Game Over screen`, it just replaces some text and the screen that is called when pressing enter
+
+![start screen](report-assets/start-screen.gif "start screen")

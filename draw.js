@@ -392,6 +392,7 @@ class ShipCursor extends Ship {
     this.positions = positions;
     this.timeout = Date.now()+200
     this.current = 0;
+    this.dead = true;
   }
   update() {
     if (Date.now()>this.timeout) {

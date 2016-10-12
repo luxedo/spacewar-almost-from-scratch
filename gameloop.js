@@ -45,6 +45,7 @@ let Game = {
 // Screens objects
 let gameScreen = {}
 let gameOverScreen = {}
+let startScreen = {}
 
 // Game globals
 let winner = "player 1 wins";
@@ -81,7 +82,7 @@ Game.start = function() {
   Game.maskContext.fill();
 
   // run loop
-  Game.changeState(gameScreen)
+  Game.changeState(startScreen)
   Game._onEachFrame(Game.run);
 };
 
