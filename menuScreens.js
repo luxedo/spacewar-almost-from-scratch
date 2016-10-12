@@ -22,15 +22,46 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 const gameOverPositions = [[180, 360], [230, 410]]
 const startScreenPositions = [[190, 310], [190, 360], [200, 410]]
 
+
+creditsScreen.init = function() {
+  creditsScreen.stars = gameScreen.makeStars()
+}
+creditsScreen.draw = function() {
+  Game.context.clearRect(0, 0, Game.width, Game.height);
+  // draw board
+  drawCircle(Game.width/2, Game.height/2, Game.radius)
+  creditsScreen.stars.forEach((value) => drawPoint(...value));
+  // add text
+  writeCentered(50, "SPACEWAR", 4);
+  writeCentered(100, "almost from scratch", 2);
+  writeText(50, 200, "This is an attempt of making the game spacewar using", 1);
+  writeText(50, 220, "modern programming languages. You can find more", 1);
+  writeText(50, 240, "information about the project in it's github page:", 1);
+  writeCentered(280, "https://github.com/ArmlessJohn404/spacewar-almost-from-scratch", 0.8);
+  writeText(50, 320, "Thanks ...", 1);
+  writeCentered(460, "This project is under a GNU GPL3 license. Have fun! ;)", 0.9);
+  writeCentered(480, "Copyright (C) 2016  Luiz Eduardo Amaral", 0.9);
+  writeCentered(500, "<luizamaral306(at)gmail.com>", 0.9);
+
+  writeCentered(550, "esc - go back");
+  writeCentered(570, VERSION);
+}
+creditsScreen.update = function() {
+  if (Key.isDown(27)) {
+    // Game.blip4();
+    Game.changeState(startScreen);
+  }
+}
+
 startScreen.init = function() {
   startScreen.stars = gameScreen.makeStars()
   startScreen.arrow = new ShipCursor(startScreenPositions, player1Vectors, 3);
 }
 startScreen.draw = function() {
   Game.context.clearRect(0, 0, Game.width, Game.height);
-  startScreen.stars.forEach((value) => drawPoint(...value));
   // draw board
   drawCircle(Game.width/2, Game.height/2, Game.radius)
+  startScreen.stars.forEach((value) => drawPoint(...value));
 
   startScreen.arrow.draw()
   writeCentered(100, "SPACEWAR", 5);
@@ -50,7 +81,7 @@ startScreen.update = function() {
     // Game.blip4();
     if (startScreen.arrow.current === 0) Game.changeState(gameScreen);
     else if (startScreen.arrow.current === 1) Game.changeState(gameScreen);
-    else if (startScreen.arrow.current === 2) Game.changeState(gameScreen);
+    else if (startScreen.arrow.current === 2) Game.changeState(creditsScreen);
   }
 }
 
@@ -60,9 +91,9 @@ gameOverScreen.init = function() {
 }
 gameOverScreen.draw = function() {
   Game.context.clearRect(0, 0, Game.width, Game.height);
-  gameOverScreen.stars.forEach((value) => drawPoint(...value));
   // draw board
   drawCircle(Game.width/2, Game.height/2, Game.radius)
+  gameOverScreen.stars.forEach((value) => drawPoint(...value));
 
   gameOverScreen.arrow.draw()
   writeCentered(100, "GAME OVER", 5);

@@ -46,6 +46,7 @@ let Game = {
 let gameScreen = {}
 let gameOverScreen = {}
 let startScreen = {}
+let creditsScreen = {}
 
 // Game globals
 let winner = "player 1 wins";

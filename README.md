@@ -39,7 +39,7 @@ Since I've already worked on a project to reproduce [PONG](https://armlessjohn40
 00:00 - Start! This project started October 6th, 2016 at 17:50 (BRT). I'll be timing each step and will be placing the time it took from the beginning along with the achieved goal.
 
 ## 00:10 - LICENSE and README
-This project is under a [GNU GPL3](https://www.gnu.org/licenses/gpl-3.0.en.html). Have fun! :wink:
+This project is under a [GNU GPL3](https://www.gnu.org/licenses/gpl-3.0.en.html) license. Have fun! :wink:
 
 ## 00:15 - Host somewhere
 For now, I'll be hosting it in [github pages](https://pages.github.com/) since it's easy deploy. Check it out [here](https://armlessjohn404.github.io/spacewar-almost-from-scratch/)
@@ -201,7 +201,11 @@ When one ship is destroyed, the player goes to the `Game Over screen`. This chec
 
 The code for the cursor is basically an extended `Ship` class that has the functionalities of `Cursor` class in my [PONG](https://armlessjohn404.github.io/pong-almost-from-scratch/) game.
 
-## 16:40 - Start screen
+## 17:00 - Start screen/Credits screen
 The `Start screen` copies a lot of code from `Game Over screen`, it just replaces some text and the screen that is called when pressing enter
 
 ![start screen](report-assets/start-screen.gif "start screen")
+
+The credits screen is even easier to draw, since it does not contains moving parts.
+
+![credits](report-assets/credits.png "credits")

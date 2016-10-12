@@ -92,6 +92,10 @@ gameScreen.update = function () {
     winner = (gameScreen.player2.dead && gameScreen.player1.dead?"draw":winner)
     setTimeout(() => Game.changeState(gameOverScreen), 1000);
   }
+  if (Key.isDown(27)) {
+    // Game.blip4();
+    Game.changeState(startScreen);
+  }
 }
 
 gameScreen.rotateVector = function(vector, angle) {
