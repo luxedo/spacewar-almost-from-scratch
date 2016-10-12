@@ -44,6 +44,10 @@ let Game = {
 
 // Screens objects
 let gameScreen = {}
+let gameOverScreen = {}
+
+// Game globals
+let winner = "player 1 wins";
 
 Game._onEachFrame = (function() {
   if (window.RequestAnimationFrame) {

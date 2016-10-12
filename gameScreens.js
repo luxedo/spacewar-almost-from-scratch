@@ -37,33 +37,18 @@ const player2Keys = {
   keyLeft: 37,
   keyRight: 39,
 };
-const player1Vectors = [
-  [[8, 0], [1, 2], [-1, 2], [-8, 1], [-8, -1], [-1, -2], [1, -2], [8, 0]],
-  [[-1,  2], [-6,  4], [-8,  4], [-5,  1.5]],
-  [[-1, -2], [-6, -4], [-8, -4], [-5, -1.5]]
-];
-const player2Vectors = [
-  [[8, 0], [1, 2], [-8, 2], [-8, -2], [1, -2], [8, 0]],
-  [[-1,  2], [-6,  4], [-8,  4], [-8,  2]],
-  [[-1, -2], [-6, -4], [-8, -4], [-8, -2]],
-  [[8, 0], [-8, 0]]
-];
 
 gameScreen.init = function () {
   // Setup background
-  gameScreen.stars = []
-  let [xc, yc] = [Game.width/2, Game.height/2]
-  while (gameScreen.stars.length < STARS) {
-    let theta = Math.random()*2*Math.PI;
-    let r = Math.random()*Game.radius;
-    gameScreen.stars.push([r*Math.cos(theta)+Game.width/2, r*Math.sin(theta)+Game.height/2]);
-  }
+  gameScreen.stars = gameScreen.makeStars();
   // Create players
   gameScreen.player1 = new Ship(...p1Spawn, player1Keys, player1Vectors, 1.5);
   gameScreen.player2 = new Ship(...p2Spawn, player2Keys, player2Vectors, 1.5);
   gameScreen.player1.updateRotation(5*Math.PI/4);
   gameScreen.player2.updateRotation(Math.PI/4);
   gameScreen.blackhole = new Blackhole(Game.width/2, Game.height/2)
+
+  gameScreen.ended = false;
 }
 
 gameScreen.draw = function () {
@@ -83,14 +68,14 @@ gameScreen.update = function () {
   gameScreen.player1.update();
   gameScreen.player2.update();
   gameScreen.blackhole.update();
-  // addGravity(gameScreen.player1, Game.width/2, Game.height/2, GRAVITY);
-  // addGravity(gameScreen.player2, Game.width/2, Game.height/2, GRAVITY);
+  addGravity(gameScreen.player1, Game.width/2, Game.height/2, GRAVITY);
+  addGravity(gameScreen.player2, Game.width/2, Game.height/2, GRAVITY);
 
   // check for collision
-  let collisionArr1 = gameScreen.player1.shots.slice()
-  collisionArr1.push(gameScreen.player1)
-  let collisionArr2 = gameScreen.player2.shots.slice()
-  collisionArr2.push(gameScreen.player2)
+  let collisionArr1 = gameScreen.player1.shots.slice();
+  collisionArr1.push(gameScreen.player1);
+  let collisionArr2 = gameScreen.player2.shots.slice();
+  collisionArr2.push(gameScreen.player2);
   for (let i=0; i<collisionArr1.length; i++) {
     for (let j=0; j<collisionArr2.length; j++) {
       let sprite1 = collisionArr1[i];
@@ -100,6 +85,12 @@ gameScreen.update = function () {
         sprite2.explode();
       }
     }
+  }
+  if ((gameScreen.player1.dead || gameScreen.player2.dead) && !gameScreen.ended) {
+    gameScreen.ended = true;
+    winner = (gameScreen.player2.dead?"player 1 wins":"player 2 wins")
+    winner = (gameScreen.player2.dead && gameScreen.player1.dead?"draw":winner)
+    setTimeout(() => Game.changeState(gameOverScreen), 1000);
   }
 }
 
@@ -134,4 +125,15 @@ gameScreen.checkCollision = function(sprite1, sprite2) {
   // console.log(p1left, p1right, p1top, p1bottom, p2left, p2right, p2top, p2bottom);
   if (p2left < p1right && p1left < p2right && p2top < p1bottom && p1top < p2bottom) return true;
   return false;
+}
+
+gameScreen.makeStars = function () {
+  let stars = []
+  let [xc, yc] = [Game.width/2, Game.height/2]
+  while (stars.length < STARS) {
+    let theta = Math.random()*2*Math.PI;
+    let r = Math.random()*Game.radius;
+    stars.push([r*Math.cos(theta)+Game.width/2, r*Math.sin(theta)+Game.height/2]);
+  }
+  return stars;
 }

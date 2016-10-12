@@ -29,6 +29,17 @@ const SHOT_INTERVAL = 500;
 const BLACKHOLE_SIZE = 12;
 const MAXACCEL = 1;
 const BLAST_SIZE = 50;
+const player1Vectors = [
+  [[8, 0], [1, 2], [-1, 2], [-8, 1], [-8, -1], [-1, -2], [1, -2], [8, 0]],
+  [[-1,  2], [-6,  4], [-8,  4], [-5,  1.5]],
+  [[-1, -2], [-6, -4], [-8, -4], [-5, -1.5]]
+];
+const player2Vectors = [
+  [[8, 0], [1, 2], [-8, 2], [-8, -2], [1, -2], [8, 0]],
+  [[-1,  2], [-6,  4], [-8,  4], [-8,  2]],
+  [[-1, -2], [-6, -4], [-8, -4], [-8, -2]],
+  [[8, 0], [-8, 0]]
+];
 
 function drawArray(array, width=1, color="#FFF") {
   array = array.slice();
@@ -77,6 +88,16 @@ function parseLetter(letter) {
   return [coordinates, finalPosition];
 }
 
+function phraseLength(phrase, size) {
+  // returns the final position of a phrase
+  let lastPosition = 0;
+  phrase.split("").forEach((letter) => {
+      let [coordinates, finalPosition] = parseLetter(letter.toUpperCase());
+      lastPosition += finalPosition;
+  });
+  return lastPosition*size;
+}
+
 function writeText(x, y, text, size=1, width=1, color="#FFF") {
   let lastPosition = 0;
   text.split("").forEach((letter) => {
@@ -87,6 +108,11 @@ function writeText(x, y, text, size=1, width=1, color="#FFF") {
       });
       lastPosition += finalPosition;
   });
+}
+
+function writeCentered(y, text, size=1, width=1, color="#FFF") {
+  const textLength = phraseLength(text, size);
+  writeText(Game.width/2-textLength/2, y, text, size, width, color);
 }
 
 function addGravity(element, cx, cy, gravity) {
@@ -241,6 +267,10 @@ class Ship extends BaseSprite {
         // rotate vectors around center
         this.updateRotation();
       };
+      // black hole collision
+      let playerToBlackhole = Math.sqrt(Math.pow(this.x - gameScreen.blackhole.x, 2)+
+        Math.pow(this.y - gameScreen.blackhole.y, 2));
+      if (playerToBlackhole <= BLACKHOLE_SIZE) this.respawnSprite(0, 0);
     }
     // update shots
     let removeShots = []
@@ -249,12 +279,6 @@ class Ship extends BaseSprite {
       shot.update()
     });
     removeShots.forEach(val => this.shots.splice(val, 1));
-
-    // black hole collision
-    let playerToBlackhole = Math.sqrt(Math.pow(this.x - gameScreen.blackhole.x, 2)+
-      Math.pow(this.y - gameScreen.blackhole.y, 2));
-    if (playerToBlackhole <= BLACKHOLE_SIZE) this.respawnSprite(0, 0);
-
   }
   updateRotation(angle) {
     if (checkNumber(angle)) this.rotation = angle;
@@ -359,5 +383,31 @@ class Blackhole extends BaseSprite {
   }
   update() {
     super.update();
+  }
+}
+
+class ShipCursor extends Ship {
+  constructor(positions, shape, size) {
+    super(...positions[0], {}, shape, size)
+    this.positions = positions;
+    this.timeout = Date.now()+200
+    this.current = 0;
+  }
+  update() {
+    if (Date.now()>this.timeout) {
+      if (Key.isDown(38) || Key.isDown(87)) {
+        this.current-=1
+        this.timeout = Date.now()+200
+        // Game.blip1();
+      };
+      if (Key.isDown(40) || Key.isDown(83)) {
+        this.current+=1
+        this.timeout = Date.now()+200
+        // Game.blip2();
+      };
+      if (this.current >= this.positions.length) this.current = 0;
+      if (this.current < 0) this.current = this.positions.length-1;
+      [this.x, this.y] = this.positions[this.current];
+    }
   }
 }
