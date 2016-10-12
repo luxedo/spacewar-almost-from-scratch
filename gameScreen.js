@@ -20,10 +20,11 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 "use strict";
 
 const STARS = 40;
-const GRAVITY = 50;
+const GRAVITY = 20;
 
-const p1Spawn = [100, 100];
-const p2Spawn = [500, 500];
+const p1Spawn = [150, 150];
+// const p1Spawn = [450, 410];
+const p2Spawn = [450, 450];
 const player1Keys = {
   keyUp: 87,
   keyDown: 83,
@@ -43,8 +44,9 @@ const player1Vectors = [
 ];
 const player2Vectors = [
   [[8, 0], [1, 2], [-8, 2], [-8, -2], [1, -2], [8, 0]],
-  [[-1,  2], [-6,  4], [-8,  4], [-8, 2]],
-  [[-1, -2], [-6, -4], [-8, -4], [-8, -2]]
+  [[-1,  2], [-6,  4], [-8,  4], [-8,  2]],
+  [[-1, -2], [-6, -4], [-8, -4], [-8, -2]],
+  [[8, 0], [-8, 0]]
 ];
 
 gameScreen.init = function () {
@@ -52,14 +54,13 @@ gameScreen.init = function () {
   gameScreen.stars = []
   let [xc, yc] = [Game.width/2, Game.height/2]
   while (gameScreen.stars.length < STARS) {
-      let [xp, yp] = [Math.random()*Game.width, Math.random()*Game.height]
-      if (Math.sqrt(Math.pow(xp-xc, 2)+Math.pow(yp-yc, 2))<Game.radius) {
-        gameScreen.stars.push([xp, yp]);
-    }
+    let theta = Math.random()*2*Math.PI;
+    let r = Math.random()*Game.radius;
+    gameScreen.stars.push([r*Math.cos(theta)+Game.width/2, r*Math.sin(theta)+Game.height/2]);
   }
   // Create players
-  gameScreen.player1 = new Ship(...p1Spawn, player1Keys, player1Vectors, 2);
-  gameScreen.player2 = new Ship(...p2Spawn, player2Keys, player2Vectors, 2);
+  gameScreen.player1 = new Ship(...p1Spawn, player1Keys, player1Vectors, 1.5);
+  gameScreen.player2 = new Ship(...p2Spawn, player2Keys, player2Vectors, 1.5);
   gameScreen.player1.updateRotation(Math.PI/4);
   gameScreen.player2.updateRotation(-3*Math.PI/4);
   gameScreen.blackhole = new Blackhole(Game.width/2, Game.height/2)
@@ -82,15 +83,44 @@ gameScreen.update = function () {
   gameScreen.player1.update();
   gameScreen.player2.update();
   gameScreen.blackhole.update();
-  addGravity(gameScreen.player1, Game.width/2, Game.height/2, GRAVITY);
-  addGravity(gameScreen.player2, Game.width/2, Game.height/2, GRAVITY);
+  // addGravity(gameScreen.player1, Game.width/2, Game.height/2, GRAVITY);
+  // addGravity(gameScreen.player2, Game.width/2, Game.height/2, GRAVITY);
+
+  //check for players collision
+  if (gameScreen.checkCollision(gameScreen.player1, gameScreen.player2)) {
+    gameScreen.player1.explode();
+    gameScreen.player2.explode();
+  }
 }
 
-gameScreen.respawnPlayer = function(player, speedX=false, speedY=false, angle=false) {
-  let location = Math.random()*Math.PI*2;
-  if (angle) location = angle;
-  let x = (Game.radius-10)*Math.cos(location)+Game.width/2;
-  let y = (Game.radius-10)*Math.sin(location)+Game.height/2;
-  let rotation = Math.random()*Math.PI*2;
-  player.resetPlayer(x, y, rotation, speedX, speedY);
+gameScreen.rotateVector = function(vector, angle) {
+  let x = (vector[0]*Math.cos(angle)-vector[1]*Math.sin(angle));
+  let y = (vector[1]*Math.cos(angle)+vector[0]*Math.sin(angle));
+  return [x, y]
+}
+
+gameScreen.checkCollision = function(sprite1, sprite2) {
+  // Limits of the sprite
+  const p1c = sprite1.corners;
+  const p2c = sprite2.corners;
+  // Translate sprites to make p1c[0] the origin
+  const p1cT = sprite1.corners.map(val => [val[0]-p1c[0][0], val[1]-p1c[0][1]]);
+  const p2cT = sprite2.corners.map(val => [val[0]-p1c[0][0], val[1]-p1c[0][1]]);
+  // Calculate the rotation to align the p1 bounding box
+  const angle = Math.atan2(p1cT[2][1], p1cT[2][0]);
+  // Rotate vetcors to align
+  const p1cTR = p1cT.map(val => gameScreen.rotateVector(val, angle));
+  const p2cTR = p2cT.map(val => gameScreen.rotateVector(val, angle));
+  // Calculate extreme points of the bounding boxes
+  const p1left = Math.min(...p1cTR.map(value => value[0]))
+  const p1right = Math.max(...p1cTR.map(value => value[0]))
+  const p1top = Math.min(...p1cTR.map(value => value[1]))
+  const p1bottom = Math.max(...p1cTR.map(value => value[1]))
+  const p2left = Math.min(...p2cTR.map(value => value[0]))
+  const p2right = Math.max(...p2cTR.map(value => value[0]))
+  const p2top = Math.min(...p2cTR.map(value => value[1]))
+  const p2bottom = Math.max(...p2cTR.map(value => value[1]))
+  // Check if shadows overlap in both axes
+  if (p2left < p1right && p1left < p2right && p2top < p1bottom && p1top < p2bottom) return true;
+  return false;
 }

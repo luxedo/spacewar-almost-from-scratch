@@ -21,7 +21,7 @@ Since I've already worked on a project to reproduce [PONG](https://armlessjohn40
 * Implement collision mechanics
   ~~* Collision with the black hole~~
   ~~* Collision with the borders~~
-  * Collision between Ships
+  ~~* Collision between Ships~~
   * Collision between Shots
   * Collision Ship-Shots
 * Create gameover screen
@@ -149,6 +149,41 @@ function addGravity(element, cx, cy, gravity) {
 
 ## Implement collision mechanics
 ### 11:35 - Collision with the black hole
-The black hole spawns any Ship that reaches its position to a random position in the board with `speed=0`.
+The black hole spawns any Ship that reaches its position to a random position in the board with `speed=0`. This is checked in the object's update method.
 ### 12:20 - Collision with the borders
-The game board wraps around itself, making it infinite. So, whenever a player or shot reaches the borders, they're spawned back in the other side of the board.
+The game board wraps around itself, making it infinite. So, whenever a player or shot reaches the borders, they're spawned back in the other side of the board. This also happens for the `Shot` class. The collision is checked in the object's update method.
+### 14:00 - Collision between Ships
+When the two players collide, there is an explosion and the game should end. This check is made in the gameloop's update method.
+The collision is calculated using [Separating Axis Theorem](https://en.wikipedia.org/wiki/Hyperplane_separation_theorem). It ended up in a function with 15 constants and a single if statement to tell whether the ships have collided.
+
+```javascript
+checkCollision = function(sprite1, sprite2) {
+  // Limits of the sprite
+  const p1c = sprite1.corners;
+  const p2c = sprite2.corners;
+  // Translate sprites to make p1c[0] the origin
+  const p1cT = sprite1.corners.map(val => [val[0]-p1c[0][0], val[1]-p1c[0][1]]);
+  const p2cT = sprite2.corners.map(val => [val[0]-p1c[0][0], val[1]-p1c[0][1]]);
+  // Calculate the rotation to align the p1 bounding box
+  const angle = Math.atan2(p1cT[2][1], p1cT[2][0]);
+  // Rotate vetcors to align
+  const p1cTR = p1cT.map(val => gameScreen.rotateVector(val, angle));
+  const p2cTR = p2cT.map(val => gameScreen.rotateVector(val, angle));
+  // Calculate extreme points of the bounding boxes
+  const p1left = Math.min(...p1cTR.map(value => value[0]))
+  const p1right = Math.max(...p1cTR.map(value => value[0]))
+  const p1top = Math.min(...p1cTR.map(value => value[1]))
+  const p1bottom = Math.max(...p1cTR.map(value => value[1]))
+  const p2left = Math.min(...p2cTR.map(value => value[0]))
+  const p2right = Math.max(...p2cTR.map(value => value[0]))
+  const p2top = Math.min(...p2cTR.map(value => value[1]))
+  const p2bottom = Math.max(...p2cTR.map(value => value[1]))
+  // Check if shadows overlap in both axes
+  if (p2left < p1right && p1left < p2right && p2top < p1bottom && p1top < p2bottom) return true;
+  return false;
+}
+```
+
+I also created an `explode` method in the `Ship` class so when they collide, it shows a satisfying explosion. The explosion have 4 frames of dots generated randomly with varying radius.
+
+![explosion](report-assets/explosion.gif "explosion")

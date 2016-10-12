@@ -22,12 +22,13 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 const ROTATION_SPEED = 3;
 const THRUSTER_SPEED = 0.002;
 const FIRE_LENGTH = 10;
-const SHOT_DISTANCE = 300;
+const SHOT_DISTANCE = 200;
 const SHOT_SPEED = 1;
 const SHOT_SIZE = 5;
 const SHOT_INTERVAL = 500;
 const BLACKHOLE_SIZE = 12;
 const MAXACCEL = 1;
+const BLAST_SIZE = 50;
 
 function drawArray(array, width=1, color="#FFF") {
   array = array.slice();
@@ -100,6 +101,10 @@ function addGravity(element, cx, cy, gravity) {
   element.speedY += (fy<MAXACCEL?fy:MAXACCEL);
 }
 
+function checkNumber(number) {
+  return !isNaN(parseFloat(number)) && isFinite(number);
+}
+
 class BaseSprite {
   constructor(x, y) {
     this.x = x;
@@ -111,6 +116,31 @@ class BaseSprite {
   update() {
     this.x += this.speedX;
     this.y += this.speedY;
+
+    // border collision
+    let spriteToBorder = Game.radius - Math.sqrt(Math.pow(this.x -
+      Game.width/2,2) + Math.pow(this.y - Game.height/2, 2));
+    if (spriteToBorder <= 0) {
+      let angle = Math.atan2(this.y-Game.height/2, this.x-Game.width/2)+Math.PI;
+      let x = (Game.radius-10)*Math.cos(angle)+Game.width/2;
+      let y = (Game.radius-10)*Math.sin(angle)+Game.height/2;
+      this.resetSprite(x, y);
+    }
+  }
+  resetSprite(x, y, rotation=false, speedX=false, speedY=false) {
+    if (checkNumber(speedX)) this.speedX = speedX;
+    if (checkNumber(speedY)) this.speedY = speedY;
+    if (checkNumber(rotation)) this.updateRotation(rotation);
+    this.x = x;
+    this.y = y;
+  }
+  respawnSprite(speedX=false, speedY=false, angle=false) {
+    let location = Math.random()*Math.PI*2;
+    if (angle) location = angle;
+    let x = (Game.radius-10)*Math.cos(location)+Game.width/2;
+    let y = (Game.radius-10)*Math.sin(location)+Game.height/2;
+    let rotation = Math.random()*Math.PI*2;
+    this.resetSprite(x, y, rotation, speedX, speedY);
   }
 }
 
@@ -163,12 +193,21 @@ class Ship extends BaseSprite {
     return retval;
   }
 
+  get corners() {
+    let lt = this.rotateVector([this.left, this.top]);
+    let rt = this.rotateVector([this.right, this.top]);
+    let lb = this.rotateVector([this.left, this.bottom]);
+    let rb = this.rotateVector([this.right, this.bottom]);
+    let retval = [lt, rt, lb, rb].map(value => [value[0]+this.x, value[1]+this.y])
+    return retval;
+  }
+
   draw() {
     // draw ship
     this.showShape.forEach(value => drawArray(value
       .map(vector => [vector[0]*this.size+this.x, vector[1]*this.size+this.y])));
     // draw thrusters fire
-    if (this.thrusters) {
+    if (this.thrusters && !this.dead) {
       let fireLength = Math.random()*FIRE_LENGTH*this.size;
       let fireArray = [this.rear, [this.rear[0]-fireLength*Math.cos(this.rotation), this.rear[1]-fireLength*Math.sin(this.rotation)]];
       drawArray(fireArray);
@@ -177,6 +216,7 @@ class Ship extends BaseSprite {
     this.shots.forEach(shot => shot.draw());
   }
   update() {
+    if (this.dead) return;
     super.update();
     this.thrusters = false;
     if (Key.isDown(this.keyUp)) {
@@ -216,31 +256,40 @@ class Ship extends BaseSprite {
     // black hole collision
     let playerToBlackhole = Math.sqrt(Math.pow(this.x - gameScreen.blackhole.x, 2)+
       Math.pow(this.y - gameScreen.blackhole.y, 2));
-    if (playerToBlackhole <= BLACKHOLE_SIZE) gameScreen.respawnPlayer(this, 0, 0);
+    if (playerToBlackhole <= BLACKHOLE_SIZE) this.respawnSprite(0, 0);
 
-    // border collision
-    let playerToBorder = Game.radius - Math.sqrt(Math.pow(this.x -
-      Game.width/2,2) + Math.pow(this.y - Game.height/2, 2));
-    if (playerToBorder <= 0) {
-      let angle = Math.atan2(this.y-Game.height/2, this.x-Game.width/2)+Math.PI;
-      let x = (Game.radius-10)*Math.cos(angle)+Game.width/2;
-      let y = (Game.radius-10)*Math.sin(angle)+Game.height/2;
-      this.resetPlayer(x, y);
-    }
   }
   updateRotation(angle) {
-    if (!isNaN(parseFloat(angle)) && isFinite(angle)) this.rotation = angle;
+    if (checkNumber(angle)) this.rotation = angle;
     this.showShape = this.shape
       .map(value0 => value0
         .map(value1 => this.rotateVector(value1)
       ));
   }
-  resetPlayer(x, y, rotation=false, speedX=false, speedY=false) {
-    if (!isNaN(parseFloat(speedX)) && isFinite(speedX)) this.speedX = speedX;
-    if (!isNaN(parseFloat(speedY)) && isFinite(speedY)) this.speedY = speedY;
-    if (!isNaN(parseFloat(rotation)) && isFinite(rotation)) this.updateRotation(rotation);
-    this.x = x;
-    this.y = y;
+  explode() {
+    if (this.dead) return;
+    this.dead = true;
+    let spriteRadius = Math.max(...[this.top, this.bottom, this.left, this.right].map((val) => Math.abs(val)))
+    let blast0 = this.fillExplosion(spriteRadius, BLAST_SIZE);
+    let blast1 = this.fillExplosion(spriteRadius*2, BLAST_SIZE);
+    let blast2 = this.fillExplosion(spriteRadius*5, BLAST_SIZE);
+    let blast3 = this.fillExplosion(spriteRadius, BLAST_SIZE);
+    let empty = []
+    this.showShape = blast0;
+    setTimeout(()=> this.showShape = blast1, 60);
+    setTimeout(()=> this.showShape = blast2, 120);
+    setTimeout(()=> this.showShape = blast3, 180);
+    setTimeout(()=> this.showShape = empty, 240);
+  }
+  fillExplosion(radius, debris) {
+    let array = []
+    while (array.length < debris) {
+      let theta = Math.random()*2*Math.PI;
+      let r = Math.random()*radius;
+      let [x, y] = [r*Math.cos(theta), r*Math.sin(theta)]
+      array.push([[x, y], [x+1, y+1]])
+    }
+    return array;
   }
 }
 
