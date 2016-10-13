@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 html, body {
   background-color: #000;
-  color: #FFF;
+  color: #0F0;
   font-family: monospace;
   text-align: center;
   margin:0;
@@ -51,6 +51,6 @@ html, body {
 }
 
 a:link, a:visited, a:hover, a:active {
-  color: #FFF;
+  color: #0F0;
   text-decoration: underline;
 }

@@ -29,6 +29,7 @@ const SHOT_INTERVAL = 500;
 const BLACKHOLE_SIZE = 12;
 const MAXACCEL = 1;
 const BLAST_SIZE = 50;
+const VECTOR_COLOR = "#0F0"
 const player1Vectors = [
   [[8, 0], [1, 2], [-1, 2], [-8, 1], [-8, -1], [-1, -2], [1, -2], [8, 0]],
   [[-1,  2], [-6,  4], [-8,  4], [-5,  1.5]],
@@ -41,7 +42,7 @@ const player2Vectors = [
   [[8, 0], [-8, 0]]
 ];
 
-function drawArray(array, width=1, color="#FFF") {
+function drawArray(array, width=1, color=VECTOR_COLOR) {
   array = array.slice();
   // setup style
   Game.context.lineWidth = width;
@@ -55,7 +56,7 @@ function drawArray(array, width=1, color="#FFF") {
   Game.context.stroke();
 }
 
-function drawCircle(x, y, radius, width=1, color="#FFF") {
+function drawCircle(x, y, radius, width=1, color=VECTOR_COLOR) {
   // setup style
   Game.context.lineWidth = width;
   Game.context.strokeStyle = color;
@@ -65,7 +66,7 @@ function drawCircle(x, y, radius, width=1, color="#FFF") {
   Game.context.stroke();
 }
 
-function drawPoint(x, y, width=1, color="#FFF") {
+function drawPoint(x, y, width=1, color=VECTOR_COLOR) {
   drawArray([[x, y], [x+width, y+width]], width+1)
 }
 
@@ -98,7 +99,7 @@ function phraseLength(phrase, size) {
   return lastPosition*size;
 }
 
-function writeText(x, y, text, size=1, width=1, color="#FFF") {
+function writeText(x, y, text, size=1, width=1, color=VECTOR_COLOR) {
   let lastPosition = 0;
   text.split("").forEach((letter) => {
       let [coordinates, finalPosition] = parseLetter(letter.toUpperCase());
@@ -110,7 +111,7 @@ function writeText(x, y, text, size=1, width=1, color="#FFF") {
   });
 }
 
-function writeCentered(y, text, size=1, width=1, color="#FFF") {
+function writeCentered(y, text, size=1, width=1, color=VECTOR_COLOR) {
   const textLength = phraseLength(text, size);
   writeText(Game.width/2-textLength/2, y, text, size, width, color);
 }

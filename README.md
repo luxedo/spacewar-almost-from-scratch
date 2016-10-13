@@ -257,3 +257,6 @@ Game.playSoundX = soundFactory(soundX, 0, 500);
 Game.playSoundX();
 ```
 Thanks to `meroleroman7`, `Shaun105`, `jeremysykes` and `ProjectsU012` for the sound assets.
+
+## 19:30 - Improve webpage
+I added some [Open Graph](http://ogp.me/) tags to make it more pleasing when sharing. Also, changed the base color to green, more similar to the old CRT displays. I can't think of anything else to change right now.
