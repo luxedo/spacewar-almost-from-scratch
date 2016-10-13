@@ -18,17 +18,17 @@ Since I've already worked on a project to reproduce [PONG](https://armlessjohn40
 * ~~Create `Shot` class~~
 * ~~Create `blackhole` sprite~~
 * ~~Implement gravity mechanics~~
-~~* Implement collision mechanics~~
-  ~~* Collision with the black hole~~
-  ~~* Collision with the borders~~
-  ~~* Collision between Ships~~
-  ~~* Collision between Shots~~
-  ~~* Collision Ship-Shots~~
-~~* Create game over screen~~
-~~* Create start screen~~
-~~* Create credits screen~~
-~~* Create enemy AI~~
-~~* Add sounds~~
+* ~~Implement collision mechanics~~
+  * ~~Collision with the black hole~~
+  * ~~Collision with the borders~~
+  * ~~Collision between Ships~~
+  * ~~Collision between Shots~~
+  * ~~Collision Ship-Shots~~
+* ~~Create game over screen~~
+* ~~Create start screen~~
+* ~~Create credits screen~~
+* ~~Create enemy AI~~
+* ~~Add sounds~~
 * Improve webpage
 * Get playtesters feedback
 * List requests/bugs
@@ -233,4 +233,27 @@ if (Game.player1.shots.length > 2 || (p1r>SHOT_DISTANCE*2 && angleDelta<ROTATION
 }
 ```
 
-## 18:00 - Enemy AI
+## 19:10 - Sounds
+
+The original game had no sounds, I added some 8-bit sounds just to make it more interesting. The sounds are some free `wav` files I've found at [Freesound.org](https://www.freesound.org).
+
+I used `HTMLMediaElements` to play the sounds. With the aid of one function, I just pass some parameters and can call the sound anywhere in the game.
+
+```javascript
+// sound factory
+function soundFactory(audio, start, stop) {
+  return () => {
+    if (audio.paused) {
+      audio.play();
+      setTimeout(()=>{
+        audio.pause();
+        audio.currentTime = start;
+      }, stop);
+    }
+  }
+}
+soundX = new Audio(soundXURL);
+Game.playSoundX = soundFactory(soundX, 0, 500);
+Game.playSoundX();
+```
+Thanks to `meroleroman7`, `Shaun105`, `jeremysykes` and `ProjectsU012` for the sound assets.

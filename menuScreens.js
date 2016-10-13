@@ -38,7 +38,8 @@ creditsScreen.draw = () => {
   writeText(50, 220, "modern programming languages. You can find more", 1);
   writeText(50, 240, "information about the project in it's github page:", 1);
   writeCentered(280, "https://github.com/ArmlessJohn404/spacewar-almost-from-scratch", 0.8);
-  writeText(50, 320, "Thanks ...", 1);
+  writeText(50, 320, "Thanks to meroleroman7, Shaun105, jeremysykes and", 1);
+  writeText(50, 340, "ProjectsU012 for the sound assets.", 1);
   writeCentered(460, "This project is under a GNU GPL3 license. Have fun! ;)", 0.9);
   writeCentered(480, "Copyright (C) 2016  Luiz Eduardo Amaral", 0.9);
   writeCentered(500, "<luizamaral306(at)gmail.com>", 0.9);
@@ -48,7 +49,7 @@ creditsScreen.draw = () => {
 }
 creditsScreen.update = () => {
   if (Key.isDown(27)) {
-    // Game.blip4();
+    Game.laser1();
     Game.changeState(startScreen);
   }
 }
@@ -76,9 +77,9 @@ startScreen.draw = () => {
 startScreen.update = () => {
   startScreen.arrow.update()
   if (Key.isDown(13)) {
-    if (Game.keyTimeout > Date.now()) return
+    if (Game.keyTimeout > Date.now()) return;
     Game.keyTimeout = Date.now()+200;
-    // Game.blip4();
+    Game.laser2();
     if (startScreen.arrow.current === 0) Game.changeState(enemyScreen);
     else if (startScreen.arrow.current === 1) Game.changeState(versusScreen);
     else if (startScreen.arrow.current === 2) Game.changeState(creditsScreen);
@@ -108,14 +109,14 @@ gameOverScreen.update = () => {
   if (Key.isDown(13)) {
     if (Game.keyTimeout > Date.now()) return
     Game.keyTimeout = Date.now()+200;
-    // Game.blip4();
+    Game.laser2();
     if (gameOverScreen.arrow.current === 0) {
       if (gameMode === "versus") Game.changeState(versusScreen);
       else Game.changeState(enemyScreen);
     }
     else if (gameOverScreen.arrow.current === 1) Game.changeState(startScreen);
   } else if (Key.isDown(27)) {
-    // Game.blip4();
+    Game.laser1();
     Game.changeState(versusScreen);
   }
 }

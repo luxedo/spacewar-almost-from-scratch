@@ -176,7 +176,7 @@ class BaseSprite {
 }
 
 class Ship extends BaseSprite {
-  constructor(x, y, keys, shape, size) {
+  constructor(x, y, keys, shape, size, sound) {
     super(x, y);
     this.keyUp = keys.keyUp;
     this.keyDown = keys.keyDown;
@@ -189,6 +189,7 @@ class Ship extends BaseSprite {
     this.speedY = 0;
     this.shots = [];
     this.shotTimeout = Date.now();
+    this.sound = sound;
 
     // find centroid
     let flat = [].concat.apply([], this.shape);
@@ -272,7 +273,7 @@ class Ship extends BaseSprite {
     let now = Date.now();
     if (now >= this.shotTimeout) {
       this.shotTimeout = now+SHOT_INTERVAL;
-      this.shots.push(new Shot(...this.tip, this.rotation));
+      this.shots.push(new Shot(...this.tip, this.rotation, this.sound));
     }
   }
   fireThrusters() {
@@ -281,6 +282,7 @@ class Ship extends BaseSprite {
     // calculate new velocity vector
     this.speedX += THRUSTER_SPEED*Math.cos(this.rotation);
     this.speedY += THRUSTER_SPEED*Math.sin(this.rotation);
+    Game.thrusters();
   }
   updateRotation(angle) {
     if (checkNumber(angle)) this.rotation = angle;
@@ -298,6 +300,7 @@ class Ship extends BaseSprite {
     let blast2 = this.fillExplosion(spriteRadius*5, BLAST_SIZE);
     let blast3 = this.fillExplosion(spriteRadius, BLAST_SIZE);
     let empty = []
+    Game.explosion()
     this.showShape = blast0;
     setTimeout(()=> this.showShape = blast1, 60);
     setTimeout(()=> this.showShape = blast2, 120);
@@ -317,7 +320,7 @@ class Ship extends BaseSprite {
 }
 
 class Shot extends BaseSprite {
-  constructor(x, y, direction) {
+  constructor(x, y, direction, sound) {
     super(x, y);
     this.direction = direction;
     this.rotation = direction;
@@ -325,7 +328,7 @@ class Shot extends BaseSprite {
     this.speedX = Math.cos(direction)*SHOT_SPEED;
     this.speedY = Math.sin(direction)*SHOT_SPEED;
     this.size = SHOT_SIZE;
-
+    sound();
     this.distance = 0;
   }
   get corners() {
@@ -399,14 +402,14 @@ class ShipCursor extends Ship {
   update() {
     if (Date.now()>this.timeout) {
       if (Key.isDown(38) || Key.isDown(87)) {
-        this.current-=1
-        this.timeout = Date.now()+200
-        // Game.blip1();
+        Game.thrusters();
+        this.current-=1;
+        this.timeout = Date.now()+200;
       };
       if (Key.isDown(40) || Key.isDown(83)) {
-        this.current+=1
-        this.timeout = Date.now()+200
-        // Game.blip2();
+        Game.thrusters();
+        this.current+=1;
+        this.timeout = Date.now()+200;
       };
       if (this.current >= this.positions.length) this.current = 0;
       if (this.current < 0) this.current = this.positions.length-1;

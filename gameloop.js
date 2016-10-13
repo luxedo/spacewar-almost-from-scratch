@@ -53,6 +53,25 @@ let enemyScreen = {}
 let winner = "player 1 wins";
 let gameMode = "enemy";
 
+// Sounds assets
+let explosionURL = "assets/334266__projectsu012__short-explosion-1.wav";
+let laser1URL  = "assets/344511__jeremysykes__laser03.wav";
+let laser2URL  = "assets/268168__shaun105__laser.wav";
+let thrustersURL  = "assets/238283__meroleroman7__8-bit-noise.wav";
+
+// sound factory
+function soundFactory(audio, start, stop) {
+  return () => {
+    if (audio.paused) {
+      audio.play();
+      setTimeout(()=>{
+        audio.pause();
+        audio.currentTime = start;
+      }, stop);
+    }
+  }
+}
+
 Game._onEachFrame = (function() {
   if (window.RequestAnimationFrame) {
    return (cb) => {
@@ -83,6 +102,16 @@ Game.start = function() {
   Game.maskContext.globalCompositeOperation = "xor"
   Game.maskContext.arc(Game.width/2, Game.height/2, Game.radius+1, 0, 2*Math.PI);
   Game.maskContext.fill();
+
+  // Sounds
+  Game.explosionSound = new Audio(explosionURL);
+  Game.laser1Sound = new Audio(laser1URL);
+  Game.laser2Sound = new Audio(laser2URL);
+  Game.thrustersSound = new Audio(thrustersURL);
+  Game.explosion = soundFactory(Game.explosionSound, 0, 300);
+  Game.laser1 = soundFactory(Game.laser1Sound, 0, 300);
+  Game.laser2 = soundFactory(Game.laser2Sound, 0, 300);
+  Game.thrusters = soundFactory(Game.thrustersSound, 100, 350);
 
   // run loop
   Game.changeState(startScreen)
