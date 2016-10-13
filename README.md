@@ -29,7 +29,7 @@ Since I've already worked on a project to reproduce [PONG](https://armlessjohn40
 * ~~Create credits screen~~
 * ~~Create enemy AI~~
 * ~~Add sounds~~
-* Improve webpage
+* ~~Improve webpage~~
 * Get playtesters feedback
 * List requests/bugs
 * Fix requests/bugs
@@ -260,3 +260,8 @@ Thanks to `meroleroman7`, `Shaun105`, `jeremysykes` and `ProjectsU012` for the s
 
 ## 19:30 - Improve webpage
 I added some [Open Graph](http://ogp.me/) tags to make it more pleasing when sharing. Also, changed the base color to green, more similar to the old CRT displays. I can't think of anything else to change right now.
+
+## Get playtesters feedback
+## List requests/bugs
+## Fix requests/bugs
+## Finished!
