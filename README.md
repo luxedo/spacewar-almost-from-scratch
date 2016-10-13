@@ -26,9 +26,9 @@ Since I've already worked on a project to reproduce [PONG](https://armlessjohn40
   ~~* Collision Ship-Shots~~
 ~~* Create game over screen~~
 ~~* Create start screen~~
-* Create credits screen
-* Create enemy AI
-* Add sounds
+~~* Create credits screen~~
+~~* Create enemy AI~~
+~~* Add sounds~~
 * Improve webpage
 * Get playtesters feedback
 * List requests/bugs
@@ -167,8 +167,8 @@ checkCollision = function(sprite1, sprite2) {
   // Calculate the rotation to align the p1 bounding box
   const angle = Math.atan2(p1cT[2][1], p1cT[2][0]);
   // Rotate vetcors to align
-  const p1cTR = p1cT.map(val => gameScreen.rotateVector(val, angle));
-  const p2cTR = p2cT.map(val => gameScreen.rotateVector(val, angle));
+  const p1cTR = p1cT.map(val => versusScreen.rotateVector(val, angle));
+  const p2cTR = p2cT.map(val => versusScreen.rotateVector(val, angle));
   // Calculate extreme points of the bounding boxes
   const p1left = Math.min(...p1cTR.map(value => value[0]))
   const p1right = Math.max(...p1cTR.map(value => value[0]))
@@ -209,3 +209,28 @@ The `Start screen` copies a lot of code from `Game Over screen`, it just replace
 The credits screen is even easier to draw, since it does not contains moving parts.
 
 ![credits](report-assets/credits.png "credits")
+
+## 18:30 - Enemy AI
+I didn't want to make a very complicated AI, otherwise it would take too much time. I came up with a simple solution. The enemy always tries to face `player1`, it fires it's weapon when the player is closer than 200px of distance and pointing in the right direction, and it will fire it's thrusters when the player shot more than two shots or if the player is too far.
+```javascript
+// basic vectors
+let p1dx = Game.player1.x-Game.player2.x;
+let p1dy = Game.player1.y-Game.player2.y;
+let p1r = Math.hypot(p1dx, p1dy);
+// player1 angle in relation to player2
+let angleDelta = (Math.atan2(p1dy, p1dx)-Game.player2.rotation)%(Math.PI*2)
+// Adjust angles and limit to ROTATION_SPEED
+angleDelta = (angleDelta<Math.PI?angleDelta:angleDelta-2*Math.PI)
+angleDelta = (angleDelta<-Math.PI?angleDelta+2*Math.PI:angleDelta)
+angleDelta = (Math.abs(angleDelta)<ROTATION_SPEED?angleDelta:Math.sign(angleDelta)*ROTATION_SPEED);
+// Apply actions
+Game.player2.updateRotation(Game.player2.rotation+angleDelta);
+if (p1r < SHOT_DISTANCE*1.5 && angleDelta<ROTATION_SPEED) {
+  Game.player2.fire();
+}
+if (Game.player1.shots.length > 2 || (p1r>SHOT_DISTANCE*2 && angleDelta<ROTATION_SPEED)) {
+  Game.player2.fireThrusters()
+}
+```
+
+## 18:00 - Enemy AI

@@ -43,13 +43,15 @@ let Game = {
 };
 
 // Screens objects
-let gameScreen = {}
+let versusScreen = {}
 let gameOverScreen = {}
 let startScreen = {}
 let creditsScreen = {}
+let enemyScreen = {}
 
 // Game globals
 let winner = "player 1 wins";
+let gameMode = "enemy";
 
 Game._onEachFrame = (function() {
   if (window.RequestAnimationFrame) {

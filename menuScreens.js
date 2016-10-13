@@ -23,10 +23,10 @@ const gameOverPositions = [[180, 360], [230, 410]]
 const startScreenPositions = [[190, 310], [190, 360], [200, 410]]
 
 
-creditsScreen.init = function() {
-  creditsScreen.stars = gameScreen.makeStars()
+creditsScreen.init = () => {
+  creditsScreen.stars = versusScreen.makeStars()
 }
-creditsScreen.draw = function() {
+creditsScreen.draw = () => {
   Game.context.clearRect(0, 0, Game.width, Game.height);
   // draw board
   drawCircle(Game.width/2, Game.height/2, Game.radius)
@@ -46,18 +46,18 @@ creditsScreen.draw = function() {
   writeCentered(550, "esc - go back");
   writeCentered(570, VERSION);
 }
-creditsScreen.update = function() {
+creditsScreen.update = () => {
   if (Key.isDown(27)) {
     // Game.blip4();
     Game.changeState(startScreen);
   }
 }
 
-startScreen.init = function() {
-  startScreen.stars = gameScreen.makeStars()
+startScreen.init = () => {
+  startScreen.stars = versusScreen.makeStars()
   startScreen.arrow = new ShipCursor(startScreenPositions, player1Vectors, 3);
 }
-startScreen.draw = function() {
+startScreen.draw = () => {
   Game.context.clearRect(0, 0, Game.width, Game.height);
   // draw board
   drawCircle(Game.width/2, Game.height/2, Game.radius)
@@ -73,23 +73,23 @@ startScreen.draw = function() {
   writeCentered(530, "enter - go              esc - go back");
   writeCentered(570, VERSION);
 }
-startScreen.update = function() {
+startScreen.update = () => {
   startScreen.arrow.update()
   if (Key.isDown(13)) {
     if (Game.keyTimeout > Date.now()) return
     Game.keyTimeout = Date.now()+200;
     // Game.blip4();
-    if (startScreen.arrow.current === 0) Game.changeState(gameScreen);
-    else if (startScreen.arrow.current === 1) Game.changeState(gameScreen);
+    if (startScreen.arrow.current === 0) Game.changeState(enemyScreen);
+    else if (startScreen.arrow.current === 1) Game.changeState(versusScreen);
     else if (startScreen.arrow.current === 2) Game.changeState(creditsScreen);
   }
 }
 
-gameOverScreen.init = function() {
-  gameOverScreen.stars = gameScreen.makeStars()
+gameOverScreen.init = () => {
+  gameOverScreen.stars = versusScreen.makeStars()
   gameOverScreen.arrow = new ShipCursor(gameOverPositions, player1Vectors, 3);
 }
-gameOverScreen.draw = function() {
+gameOverScreen.draw = () => {
   Game.context.clearRect(0, 0, Game.width, Game.height);
   // draw board
   drawCircle(Game.width/2, Game.height/2, Game.radius)
@@ -97,21 +97,25 @@ gameOverScreen.draw = function() {
 
   gameOverScreen.arrow.draw()
   writeCentered(100, "GAME OVER", 5);
-  writeCentered(200, winner, 3);
+  if (gameMode === "versus" || winner === "draw") writeCentered(200, winner, 3);
+  else writeCentered(200, (winner==="player 1 wins"?"you win":"you lose"), 3);
   writeCentered(350, "play again", 2);
   writeCentered(400, "menu", 2);
   writeCentered(570, VERSION);
 }
-gameOverScreen.update = function() {
+gameOverScreen.update = () => {
   gameOverScreen.arrow.update()
   if (Key.isDown(13)) {
     if (Game.keyTimeout > Date.now()) return
     Game.keyTimeout = Date.now()+200;
     // Game.blip4();
-    if (gameOverScreen.arrow.current === 0) Game.changeState(gameScreen);
+    if (gameOverScreen.arrow.current === 0) {
+      if (gameMode === "versus") Game.changeState(versusScreen);
+      else Game.changeState(enemyScreen);
+    }
     else if (gameOverScreen.arrow.current === 1) Game.changeState(startScreen);
   } else if (Key.isDown(27)) {
     // Game.blip4();
-    Game.changeState(gameScreen);
+    Game.changeState(versusScreen);
   }
 }

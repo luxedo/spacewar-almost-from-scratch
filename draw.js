@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 "use strict";
 
-const ROTATION_SPEED = 3;
+const ROTATION_SPEED = 3*Math.PI/180;
 const THRUSTER_SPEED = 0.002;
 const FIRE_LENGTH = 10;
 const SHOT_DISTANCE = 200;
@@ -119,7 +119,7 @@ function addGravity(element, cx, cy, gravity) {
   // F = Gm1m2/r^2 = gravity/r^2
   let dx = element.x-cx;
   let dy = element.y-cy;
-  let F = gravity/(Math.pow(dx, 2)+Math.pow(dy, 2));
+  let F = gravity/Math.pow(Math.hypot(dx, dy), 2);
   let angle = Math.atan2(dy, dx)
   let fx = -F*Math.cos(angle);
   let fy = -F*Math.sin(angle);
@@ -144,8 +144,7 @@ class BaseSprite {
     this.y += this.speedY;
 
     // border collision
-    let spriteToBorder = Game.radius - Math.sqrt(Math.pow(this.x -
-      Game.width/2,2) + Math.pow(this.y - Game.height/2, 2));
+    let spriteToBorder = Game.radius - Math.hypot(this.x-Game.width/2, this.y-Game.height/2)
     if (spriteToBorder <= 0) {
       let angle = Math.atan2(this.y-Game.height/2, this.x-Game.width/2)+Math.PI;
       let x = (Game.radius-10)*Math.cos(angle)+Game.width/2;
@@ -186,7 +185,6 @@ class Ship extends BaseSprite {
     this.shape = shape;
     this.size = size;
     this.rotation = 0;
-    this.direction = 0;
     this.speedX = 0;
     this.speedY = 0;
     this.shots = [];
@@ -246,30 +244,20 @@ class Ship extends BaseSprite {
     if (!this.dead) {
       if (Key.isDown(this.keyUp)) {
         // fire weapon
-        let shotOrigin = this.tip;
-        let now = Date.now();
-        if (now >= this.shotTimeout) {
-          this.shotTimeout = now+SHOT_INTERVAL;
-          this.shots.push(new Shot(...this.tip, this.rotation));
-        }
+        this.fire();
       };
       if (Key.isDown(this.keyDown)) {
-        // fire thrusters
-        this.thrusters = true;
-        // calculate new velocity vector
-        this.speedX += THRUSTER_SPEED*Math.cos(this.rotation);
-        this.speedY += THRUSTER_SPEED*Math.sin(this.rotation);
+        this.fireThrusters()
       };
       if (Key.isDown(this.keyLeft) || Key.isDown(this.keyRight)) {
         // rotate ship
-        this.rotation += (Key.isDown(this.keyRight)?ROTATION_SPEED:-ROTATION_SPEED)*Math.PI/180
+        this.rotation += (Key.isDown(this.keyRight)?ROTATION_SPEED:-ROTATION_SPEED)
         this.rotation %= 2*Math.PI;
         // rotate vectors around center
         this.updateRotation();
       };
       // black hole collision
-      let playerToBlackhole = Math.sqrt(Math.pow(this.x - gameScreen.blackhole.x, 2)+
-        Math.pow(this.y - gameScreen.blackhole.y, 2));
+      let playerToBlackhole = Math.hypot(this.x-versusScreen.blackhole.x, this.y-versusScreen.blackhole.y)
       if (playerToBlackhole <= BLACKHOLE_SIZE) this.respawnSprite(0, 0);
     }
     // update shots
@@ -279,6 +267,20 @@ class Ship extends BaseSprite {
       shot.update()
     });
     removeShots.forEach(val => this.shots.splice(val, 1));
+  }
+  fire() {
+    let now = Date.now();
+    if (now >= this.shotTimeout) {
+      this.shotTimeout = now+SHOT_INTERVAL;
+      this.shots.push(new Shot(...this.tip, this.rotation));
+    }
+  }
+  fireThrusters() {
+    // fire thrusters
+    this.thrusters = true;
+    // calculate new velocity vector
+    this.speedX += THRUSTER_SPEED*Math.cos(this.rotation);
+    this.speedY += THRUSTER_SPEED*Math.sin(this.rotation);
   }
   updateRotation(angle) {
     if (checkNumber(angle)) this.rotation = angle;
