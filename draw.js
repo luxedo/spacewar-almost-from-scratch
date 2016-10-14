@@ -19,15 +19,16 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 "use strict";
 
-const ROTATION_SPEED = 3*Math.PI/180;
-const THRUSTER_SPEED = 0.002;
+const ROTATION_SPEED = 4*Math.PI/180;
+const THRUSTER_SPEED = 0.01;
 const FIRE_LENGTH = 10;
-const SHOT_DISTANCE = 200;
-const SHOT_SPEED = 1;
+const SHOT_DISTANCE = 250;
+const SHOT_SPEED = 2;
 const SHOT_SIZE = 5;
-const SHOT_INTERVAL = 500;
+const SHOT_INTERVAL = 300;
 const BLACKHOLE_SIZE = 12;
-const MAXACCEL = 1;
+const MAX_ACCEL = 1;
+const MAX_SPEED = 1;
 const BLAST_SIZE = 50;
 const VECTOR_COLOR = "#0F0"
 const player1Vectors = [
@@ -124,8 +125,8 @@ function addGravity(element, cx, cy, gravity) {
   let angle = Math.atan2(dy, dx)
   let fx = -F*Math.cos(angle);
   let fy = -F*Math.sin(angle);
-  element.speedX += (fx<MAXACCEL?fx:MAXACCEL);
-  element.speedY += (fy<MAXACCEL?fy:MAXACCEL);
+  element.speedX += (fx<MAX_ACCEL?fx:MAX_ACCEL);
+  element.speedY += (fy<MAX_ACCEL?fy:MAX_ACCEL);
 }
 
 function checkNumber(number) {
@@ -269,6 +270,13 @@ class Ship extends BaseSprite {
       shot.update()
     });
     removeShots.forEach(val => this.shots.splice(val, 1));
+
+    // limit max speed
+    const speed = Math.hypot(this.speedX, this.speedY)
+    if (speed > MAX_SPEED) {
+      this.speedX *= MAX_SPEED/speed;
+      this.speedY *= MAX_SPEED/speed;
+    }
   }
   fire() {
     let now = Date.now();

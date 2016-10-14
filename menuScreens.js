@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 "use strict";
 
 const gameOverPositions = [[180, 360], [230, 410]]
-const startScreenPositions = [[190, 310], [190, 360], [200, 410]]
+const startScreenPositions = [[190, 290], [190, 340], [200, 390]]
 
 
 creditsScreen.init = () => {
@@ -40,6 +40,10 @@ creditsScreen.draw = () => {
   writeCentered(280, "https://github.com/ArmlessJohn404/spacewar-almost-from-scratch", 0.8);
   writeText(50, 320, "Thanks to meroleroman7, Shaun105, jeremysykes and", 1);
   writeText(50, 340, "ProjectsU012 for the sound assets.", 1);
+  writeText(50, 360, "Thanks to the playtesters 00jknight, Baino and Maria", 1);
+  writeText(50, 380, "Thanks for the support of Thiago Harry, Kaska, rgk ", 1);
+  writeText(50, 400, "and 8Observer8", 1);
+  // writeText(50, 380, "ProjectsU012 for the sound assets.", 1);
   writeCentered(460, "This project is under a GNU GPL3 license. Have fun! ;)", 0.9);
   writeCentered(480, "Copyright (C) 2016  Luiz Eduardo Amaral", 0.9);
   writeCentered(500, "<luizamaral306(at)gmail.com>", 0.9);
@@ -65,13 +69,13 @@ startScreen.draw = () => {
   startScreen.stars.forEach((value) => drawPoint(...value));
 
   startScreen.arrow.draw()
-  writeCentered(100, "SPACEWAR", 5);
-  writeCentered(200, "almost from scratch", 3);
-  writeCentered(300, "1p start", 2);
-  writeCentered(350, "2p start", 2);
-  writeCentered(400, "credits", 2);
-  writeCentered(510, "'wasd' - player 1         arrows - player 2");
-  writeCentered(530, "enter - go              esc - go back");
+  writeCentered(80, "SPACEWAR", 5);
+  writeCentered(150, "almost from scratch", 2.7);
+  writeCentered(280, "1p start", 2);
+  writeCentered(330, "2p start", 2);
+  writeCentered(380, "credits", 2);
+  writeCentered(470, "'wasd' - player 1     player 2 - arrows", 1.2);
+  writeCentered(500, "enter - go            esc - go back", 1.2);
   writeCentered(570, VERSION);
 }
 startScreen.update = () => {
@@ -87,6 +91,8 @@ startScreen.update = () => {
 }
 
 gameOverScreen.init = () => {
+  winner = (Game.player2.dead?"player 1 wins":"player 2 wins")
+  winner = (Game.player2.dead && Game.player1.dead?"draw":winner)
   gameOverScreen.stars = versusScreen.makeStars()
   gameOverScreen.arrow = new ShipCursor(gameOverPositions, player1Vectors, 3);
 }

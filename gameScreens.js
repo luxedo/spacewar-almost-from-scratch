@@ -20,7 +20,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 "use strict";
 
 const STARS = 40;
-const GRAVITY = 20;
+const GRAVITY = 50;
 
 const p1Spawn = [150, 150];
 // const p1Spawn = [450, 410];
@@ -89,8 +89,6 @@ versusScreen.update = function () {
   }
   if ((Game.player1.dead || Game.player2.dead) && !versusScreen.ended) {
     versusScreen.ended = true;
-    winner = (Game.player2.dead?"player 1 wins":"player 2 wins")
-    winner = (Game.player2.dead && Game.player1.dead?"draw":winner)
     setTimeout(() => Game.changeState(gameOverScreen), 1000);
   }
   if (Key.isDown(27)) {

@@ -30,10 +30,10 @@ Since I've already worked on a project to reproduce [PONG](https://armlessjohn40
 * ~~Create enemy AI~~
 * ~~Add sounds~~
 * ~~Improve webpage~~
-* Get playtesters feedback
-* List requests/bugs
-* Fix requests/bugs
-* Finished!
+* ~~Get playtesters feedback~~
+* ~~List requests/bugs~~
+* ~~Fix requests/bugs~~
+* ~~Finished!~~
 
 ## Progress Reports
 00:00 - Start! This project started October 6th, 2016 at 17:50 (BRT). I'll be timing each step and will be placing the time it took from the beginning along with the achieved goal.
@@ -261,7 +261,22 @@ Thanks to `meroleroman7`, `Shaun105`, `jeremysykes` and `ProjectsU012` for the s
 ## 19:30 - Improve webpage
 I added some [Open Graph](http://ogp.me/) tags to make it more pleasing when sharing. Also, changed the base color to green, more similar to the old CRT displays. I can't think of anything else to change right now.
 
-## Get playtesters feedback
-## List requests/bugs
-## Fix requests/bugs
-## Finished!
+## 20:30 - List requests/bugs
+* ~~Emphasis in the control keys in startScreen - `00jknight`, `Baino`, `Maria`~~
+* ~~Make the game more dynamic - `00jknight`, `Baino`, `Maria`~~
+
+## 21:00 - Fix requests/bugs
+Now the game is much more dynamic and fun. Since the thrusters are 5 times more potent, I added a maximum speed to stop players from getting uncontrollably fast. The shots are fired in a smaller interval and the gravity is stronger. I also changed the layout of the start screen to make the key indications more visible.
+
+## 21:15 - Finished!
+Well, that was fun. Again.
+There's still 2:45h left to complete 24h, so I'll be making a single patch if there's enough feedback. The lessons that I liked were:
+* There was a character set from the 60's (Hershey Vector Font) based on vectors, nice.
+* I had to draw the pointy brackets in Hershey Vector Font's notation.
+* The thing in the center of the board should be a star, not a black hole.
+* Separating Axis Theorem was surprisingly easy to implement.
+* Working with vectors were surprisingly hard to implement, I should have prepared more linear algebra functions instead of making lots of transformations manually.
+* The physics were very simple, but it took me some time to understand `Math.atan2`, it always did the opposite of what I wanted.
+
+Thats it for now.
+#### Bye

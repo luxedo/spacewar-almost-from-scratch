@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 "use strict";
 
-const VERSION = "v1.0-beta";
+const VERSION = "v1.0";
 // keyboard handler
 let Key = {
   _pressed: {},
