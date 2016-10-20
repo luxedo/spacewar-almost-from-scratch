@@ -5,7 +5,7 @@ This is an attempt of reproducing the game [spacewar!](https://en.wikipedia.org/
 
 The game is based in `html5 canvas`, `CSS` and `ES6 javascript`. No extra libraries or engines will be used.
 
-Since I've already worked on a project to reproduce [PONG](https://armlessjohn404.github.io/pong-almost-from-scratch/), I'll be using much of it in here.
+Since I've already worked on a project to reproduce [pong-almost-from-scratch](https://armlessjohn404.github.io/pong-almost-from-scratch/), I'll be using much of it in here.
 
 ## GOALS
 * ~~Add `LICENSE.md` and `README.md`~~
@@ -45,7 +45,7 @@ This project is under a [GNU GPL3](https://www.gnu.org/licenses/gpl-3.0.en.html)
 For now, I'll be hosting it in [github pages](https://pages.github.com/) since it's easy deploy. Check it out [here](https://armlessjohn404.github.io/spacewar-almost-from-scratch/)
 
 ## 00:40 - `html/canvas` base + gameloop
-I'll be borrowing the gameloop and the base from my other project [spacewar-almost-from-scratch](https://armlessjohn404.github.io/spacewar-almost-from-scratch/).
+I'll be borrowing the gameloop and the base from my other project [pong-almost-from-scratch](https://armlessjohn404.github.io/pong-almost-from-scratch/).
 The favicon was made with GIMP.
 
 ![favicon](report-assets/favicon.png "favicon")
@@ -72,7 +72,7 @@ function drawArray(array, width=1, color="#FFF") {
 }
 ```
 
-It would be really boring to draw letters with vectors by hand, luckly I've found a set of characters made of vectors, called [Hershey Vector Font](http://paulbourke.net/dataformats/hershey/). This character set was invented in 1967, 5 years after `Spacewar`.
+It would be really boring to draw characters made of vectors by hand, luckly I've found a set of characters made of vectors, called [Hershey Vector Font](http://paulbourke.net/dataformats/hershey/). This character set was invented in 1967, 5 years after `Spacewar`.
 
 ![Hershey Vector Font](report-assets/simplex1.gif "Hershey Vector Font")
 
@@ -264,6 +264,7 @@ I added some [Open Graph](http://ogp.me/) tags to make it more pleasing when sha
 ## 20:30 - List requests/bugs
 * ~~Emphasis in the control keys in startScreen - `00jknight`, `Baino`, `Maria`~~
 * ~~Make the game more dynamic - `00jknight`, `Baino`, `Maria`~~
+* ~~Make the AI more unpredictable in the beginning - `Thiago Harry`~~
 
 ## 21:00 - Fix requests/bugs
 Now the game is much more dynamic and fun. Since the thrusters are 5 times more potent, I added a maximum speed to stop players from getting uncontrollably fast. The shots are fired in a smaller interval and the gravity is stronger. I also changed the layout of the start screen to make the key indications more visible.
@@ -278,5 +279,21 @@ There's still 2:45h left to complete 24h, so I'll be making a single patch if th
 * Working with vectors were surprisingly hard to implement, I should have prepared more linear algebra functions instead of making lots of transformations manually.
 * The physics were very simple, but it took me some time to understand `Math.atan2`, it always did the opposite of what I wanted.
 
+Thanks again to `meroleroman7`, `Shaun105`, `jeremysykes` and `ProjectsU012` for the sound assets
+
+Thanks to the playtesters `00jknight`, `Baino`, `Maria` and `Thiago Harry`.
+
+Thanks for the support of `Kaska`, `rgk` and `8Observer8`, `Igor Georgiev` and `StorytellerVR`.
+
+Thanks to `Lee Reilly` for the PR fixing a typo
+
 Thats it for now.
+#### Bye
+
+## 24:00 - Update patch
+I added an `evade` method in the `Ship` class that rotates to a random position (-90° to 90°) and fires it's thrusters for half second. This prevents the player from killing the enemy AI easily in the beginning of the round.
+
+Also, as `00jknight` pointed out, I changed the commands of `fire torpedos` and `fire thrusters`.
+
+Thats it for ever.
 #### Bye

@@ -326,6 +326,26 @@ class Ship extends BaseSprite {
     }
     return array;
   }
+  evade() {
+    this.evading = true;
+    let angle = Math.random()*Math.PI - Math.PI;
+    let rot = setInterval(() => {
+      let angleDelta = this.rotation+angle;
+      angleDelta = (angleDelta<Math.PI?angleDelta:angleDelta-2*Math.PI)
+      angleDelta = (angleDelta<-Math.PI?angleDelta+2*Math.PI:angleDelta)
+      angleDelta = (Math.abs(angleDelta)<ROTATION_SPEED?angleDelta:Math.sign(angleDelta)*ROTATION_SPEED);
+      this.updateRotation(this.rotation+angleDelta);
+      if (Math.abs(angleDelta) < 0.01) window.clearInterval(rot);
+    } ,1000/Game.FPS)
+    let thru = setInterval(() => {
+      this.fireThrusters();
+    },1000/Game.FPS)
+    setTimeout(() => {
+      window.clearInterval(thru);
+      window.clearInterval(rot);
+      this.evading = false;
+    }, 500)
+  }
 }
 
 class Shot extends BaseSprite {

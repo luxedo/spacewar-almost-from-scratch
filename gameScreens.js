@@ -26,14 +26,14 @@ const p1Spawn = [150, 150];
 // const p1Spawn = [450, 410];
 const p2Spawn = [450, 450];
 const player1Keys = {
-  keyUp: 87,
-  keyDown: 83,
+  keyUp: 83,
+  keyDown: 87,
   keyLeft: 65,
   keyRight: 68,
 };
 const player2Keys = {
-  keyUp: 38,
-  keyDown: 40,
+  keyUp: 40,
+  keyDown: 38,
   keyLeft: 37,
   keyRight: 39,
 };
@@ -149,11 +149,12 @@ enemyScreen.init = () => {
   Game.player2.keyLeft = undefined;
   Game.player2.keyRight = undefined;
   gameMode = "enemy";
+  Game.player2.evade();
 };
 enemyScreen.draw = versusScreen.draw;
 enemyScreen.update = () => {
   versusScreen.update();
-  if (!Game.player2.dead) {
+  if (!Game.player2.dead && !Game.player2.evading) {
     // basic vectors
     let p1dx = Game.player1.x-Game.player2.x;
     let p1dy = Game.player1.y-Game.player2.y;
@@ -169,7 +170,7 @@ enemyScreen.update = () => {
     if (p1r < SHOT_DISTANCE*1.5 && angleDelta<ROTATION_SPEED) {
       Game.player2.fire();
     }
-    if (Game.player1.shots.length > 2 || (p1r>SHOT_DISTANCE*2 && angleDelta<ROTATION_SPEED)) {
+    if (Game.player1.shots.length > 2 || (p1r>SHOT_DISTANCE*1.5 && angleDelta<ROTATION_SPEED)) {
       Game.player2.fireThrusters()
     }
   }

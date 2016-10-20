@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 "use strict";
 
-const VERSION = "v1.0";
+const VERSION = "v1.1";
 // keyboard handler
 let Key = {
   _pressed: {},
@@ -31,7 +31,7 @@ let Key = {
 window.addEventListener('keyup', (event) => { Key.onKeyup(event) }, false);
 window.addEventListener("keydown", (event) => {
   Key.onKeydown(event);
-  if([32, 37, 38, 39, 40].indexOf(event.keyCode) > -1) {event.preventDefault()}
+  if([32, 37, 38, 39, 40, 13].indexOf(event.keyCode) > -1) {event.preventDefault()}
 }, false);
 
 // Game object
