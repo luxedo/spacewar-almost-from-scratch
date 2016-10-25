@@ -62,10 +62,20 @@ versusScreen.draw = function () {
   Game.player2.draw();
   versusScreen.blackhole.draw();
   // draw mask to hide things outside the border
+  if (!document.hasFocus()) {
+    writeCentered(Game.height/2, "PAUSED", 4)
+  }
   Game.context.drawImage(Game.maskCanvas, 0, 0)
 }
 
 versusScreen.update = function () {
+  if (Key.isDown(27)) {
+    // Game.blip4();
+    Game.changeState(startScreen);
+  }
+  if (!document.hasFocus()) {
+    return
+  }
   Game.player1.update();
   Game.player2.update();
   versusScreen.blackhole.update();
@@ -90,10 +100,6 @@ versusScreen.update = function () {
   if ((Game.player1.dead || Game.player2.dead) && !versusScreen.ended) {
     versusScreen.ended = true;
     setTimeout(() => Game.changeState(gameOverScreen), 1000);
-  }
-  if (Key.isDown(27)) {
-    // Game.blip4();
-    Game.changeState(startScreen);
   }
 }
 
@@ -153,6 +159,9 @@ enemyScreen.init = () => {
 };
 enemyScreen.draw = versusScreen.draw;
 enemyScreen.update = () => {
+  if (!document.hasFocus()) {
+    return
+  }
   versusScreen.update();
   if (!Game.player2.dead && !Game.player2.evading) {
     // basic vectors
