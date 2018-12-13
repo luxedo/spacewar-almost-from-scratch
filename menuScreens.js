@@ -37,7 +37,7 @@ creditsScreen.draw = () => {
   writeText(50, 200, "This is an attempt of making the game spacewar using", 1);
   writeText(50, 220, "modern programming languages. You can find more", 1);
   writeText(50, 240, "information about the project in it's github page:", 1);
-  writeCentered(280, "https://github.com/ArmlessJohn404/spacewar-almost-from-scratch", 0.8);
+  writeCentered(280, "https://github.com/luxedo/spacewar-almost-from-scratch", 0.8);
   writeText(50, 320, "Thanks to meroleroman7, Shaun105, jeremysykes and", 1);
   writeText(50, 340, "ProjectsU012 for the sound assets.", 1);
   writeText(50, 360, "Thanks to the playtesters 00jknight, Baino, Maria and", 1);

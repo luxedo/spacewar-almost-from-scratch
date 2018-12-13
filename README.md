@@ -1,11 +1,11 @@
 # SPACEWAR ALMOST FROM SCRATCH
 This is an attempt of reproducing the game [spacewar!](https://en.wikipedia.org/wiki/Spacewar!) using modern programming languages. The idea is to track the progress and time each stage of development in this document. If possible, I want to finish this project in under 24h.
 
-#### Check it out [here](https://armlessjohn404.github.io/spacewar-almost-from-scratch/)
+#### Check it out [here](https://luxedo.github.io/spacewar-almost-from-scratch/)
 
 The game is based in `html5 canvas`, `CSS` and `ES6 javascript`. No extra libraries or engines will be used.
 
-Since I've already worked on a project to reproduce [pong-almost-from-scratch](https://armlessjohn404.github.io/pong-almost-from-scratch/), I'll be using much of it in here.
+Since I've already worked on a project to reproduce [pong-almost-from-scratch](https://luxedo.github.io/pong-almost-from-scratch/), I'll be using much of it in here.
 
 ## GOALS
 * ~~Add `LICENSE.md` and `README.md`~~
@@ -42,10 +42,10 @@ Since I've already worked on a project to reproduce [pong-almost-from-scratch](h
 This project is under a [GNU GPL3](https://www.gnu.org/licenses/gpl-3.0.en.html) license. Have fun! :wink:
 
 ## 00:15 - Host somewhere
-For now, I'll be hosting it in [github pages](https://pages.github.com/) since it's easy deploy. Check it out [here](https://armlessjohn404.github.io/spacewar-almost-from-scratch/)
+For now, I'll be hosting it in [github pages](https://pages.github.com/) since it's easy deploy. Check it out [here](https://luxedo.github.io/spacewar-almost-from-scratch/)
 
 ## 00:40 - `html/canvas` base + gameloop
-I'll be borrowing the gameloop and the base from my other project [pong-almost-from-scratch](https://armlessjohn404.github.io/pong-almost-from-scratch/).
+I'll be borrowing the gameloop and the base from my other project [pong-almost-from-scratch](https://luxedo.github.io/pong-almost-from-scratch/).
 The favicon was made with GIMP.
 
 ![favicon](report-assets/favicon.png "favicon")
@@ -199,7 +199,7 @@ When one ship is destroyed, the player goes to the `Game Over screen`. This chec
 
 ![game over](report-assets/game-over.gif "game over")
 
-The code for the cursor is basically an extended `Ship` class that has the functionalities of `Cursor` class in my [PONG](https://armlessjohn404.github.io/pong-almost-from-scratch/) game.
+The code for the cursor is basically an extended `Ship` class that has the functionalities of `Cursor` class in my [PONG](https://luxedo.github.io/pong-almost-from-scratch/) game.
 
 ## 17:00 - Start screen/Credits screen
 The `Start screen` copies a lot of code from `Game Over screen`, it just replaces some text and the screen that is called when pressing enter
