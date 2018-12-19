@@ -48,11 +48,11 @@ For now, I'll be hosting it in [github pages](https://pages.github.com/) since i
 I'll be borrowing the gameloop and the base from my other project [pong-almost-from-scratch](https://luxedo.github.io/pong-almost-from-scratch/).
 The favicon was made with GIMP.
 
-![favicon](https://raw.githubusercontent.com/luxedo/spacewar-almost-from-scratch/master/report-assets/favicon.png "favicon")
+![favicon](report-assets/favicon.png "favicon")
 
 And here is the webpage!!
 #### Hello World Again
-![hello world](https://raw.githubusercontent.com/luxedo/spacewar-almost-from-scratch/master/report-assets/hello-world.png "hello world")
+![hello world](report-assets/hello-world.png "hello world")
 
 ## 04:00 - Create rendering functions
 To stay true to the game origins, I'll draw only with vectors using `ctx.lineTo` method. One function was created that receives an `Array` of coordinates and draws the lines on screen.
@@ -74,7 +74,7 @@ function drawArray(array, width=1, color="#FFF") {
 
 It would be really boring to draw characters made of vectors by hand, luckly I've found a set of characters made of vectors, called [Hershey Vector Font](http://paulbourke.net/dataformats/hershey/). This character set was invented in 1967, 5 years after `Spacewar`.
 
-![Hershey Vector Font](https://raw.githubusercontent.com/luxedo/spacewar-almost-from-scratch/master/report-assets/simplex1.gif "Hershey Vector Font")
+![Hershey Vector Font](report-assets/simplex1.gif "Hershey Vector Font")
 
 In this set, each letter in the alphabeth is a series of characters that corresponds to coordinates. Eg: `M=-5`, `N=-4`, `O=-3` ...
 
@@ -92,12 +92,12 @@ alphabeth = {
 I then made a parser for this character set to transform it's language into the vectors to be drawn.
 With that, I created a function that receives `strings` and writes them in the screen. Also two more functions to make it easier to draw stuff: `drawCircle`, `drawPoint`.
 
-![drawing functions](https://raw.githubusercontent.com/luxedo/spacewar-almost-from-scratch/master/report-assets/drawing-functions.png "drawing functions")
+![drawing functions](report-assets/drawing-functions.png "drawing functions")
 
 ## 04:20 - Board Design
 The board in this game is just some stars in the background. I made the play area round, so I'm drawing a circle to show that. The stars are generated randomly in each round.
 
-![board design](https://raw.githubusercontent.com/luxedo/spacewar-almost-from-scratch/master/report-assets/board-design.png "board design")
+![board design](report-assets/board-design.png "board design")
 
 ## 08:20 - `Ship` class
 The ship class is a sprite that has it's own `draw` and `update` methods. They're called in the gameloop. The key bindings were partially done and easy to implement, since I'm using a helper object `Key` in the gameloop. This class ended up bigger than I expected, and I still need to implement somethings that are not ready yet.
@@ -111,23 +111,23 @@ let player1Vectors = [
 ]
 ```
 
-![ship sprites](https://raw.githubusercontent.com/luxedo/spacewar-almost-from-scratch/master/report-assets/ship-sprites.png "ship sprites")
+![ship sprites](report-assets/ship-sprites.png "ship sprites")
 
 It was quite tricky to rotate all the vectors in the sprite around a center. For that I created a method `updateRotation` that have an optional argument `angle` to set the property in the object and perform a rotation around the center of the sprite.
 
 When the thrusters (`keyDown`) are activated, one vector shoots out of the rear of the ships with a random length for each frame. This effect ended up very similar to the original one.
 
-![ship in the game](https://raw.githubusercontent.com/luxedo/spacewar-almost-from-scratch/master/report-assets/ship-in-the-game.gif "ship in the game")
+![ship in the game](report-assets/ship-in-the-game.gif "ship in the game")
 
 ## 10:40 - `Shot` class
 The `Shot` class is much simpler than `Ship`. It has just to start somewhere, move in the correct direction and end after a certain distance. It is created when the player presses the `keyUp` in the `Ship` class.
 
-![shot](https://raw.githubusercontent.com/luxedo/spacewar-almost-from-scratch/master/report-assets/shot.gif "shot")
+![shot](report-assets/shot.gif "shot")
 
 ## 11:00 - `Blackhole` class
 The blackhole is a simple sprite in the middle of the screen. It generates two random numbers every frame: One for the length of the vector and one for the angle.
 
-![blackhole](https://raw.githubusercontent.com/luxedo/spacewar-almost-from-scratch/master/report-assets/blackhole.gif "blackhole")
+![blackhole](report-assets/blackhole.gif "blackhole")
 
 ## 11:20 - Add gravity mechanics
 A function was created to handle the gravity mechanics. It's called in the gameloop's update method passing the `Ship` instances, the center of pull an the gravity as arguments.
@@ -145,7 +145,7 @@ function addGravity(element, cx, cy, gravity) {
 }
 ```
 
-![gravity](https://raw.githubusercontent.com/luxedo/spacewar-almost-from-scratch/master/report-assets/gravity.gif "gravity")
+![gravity](report-assets/gravity.gif "gravity")
 
 ## Implement collision mechanics
 ### 11:35 - Collision with the black hole
@@ -186,7 +186,7 @@ checkCollision = function(sprite1, sprite2) {
 
 I also created an `explode` method in the `Ship` class so when they collide, it shows a satisfying explosion. The explosion have 4 frames of dots generated randomly with varying radius.
 
-![explosion](https://raw.githubusercontent.com/luxedo/spacewar-almost-from-scratch/master/report-assets/explosion.gif "explosion")
+![explosion](report-assets/explosion.gif "explosion")
 
 ### 15:00 - Collision between `Shots`
 The shots uses the same check Collision function and two nested loops to iterate over the shots array. To destroy the shot after a collision, I set the property `distance` to be close to it's maximum distance, then it's automatically destroyed in the `Ship` update method.
@@ -197,18 +197,18 @@ Since all the functions methods for collision were ready, it was quite easy to c
 ## 16:10 - Game over screen
 When one ship is destroyed, the player goes to the `Game Over screen`. This check is made in the end of the update method in the gameloop, if any player has the property `dead` then the `Game.changeState` method is called after a timeout leading to the `Game Over screen`.
 
-![game over](https://raw.githubusercontent.com/luxedo/spacewar-almost-from-scratch/master/report-assets/game-over.gif "game over")
+![game over](report-assets/game-over.gif "game over")
 
 The code for the cursor is basically an extended `Ship` class that has the functionalities of `Cursor` class in my [PONG](https://luxedo.github.io/pong-almost-from-scratch/) game.
 
 ## 17:00 - Start screen/Credits screen
 The `Start screen` copies a lot of code from `Game Over screen`, it just replaces some text and the screen that is called when pressing enter
 
-![start screen](https://raw.githubusercontent.com/luxedo/spacewar-almost-from-scratch/master/report-assets/start-screen.gif "start screen")
+![start screen](report-assets/start-screen.gif "start screen")
 
 The credits screen is even easier to draw, since it does not contains moving parts.
 
-![credits](https://raw.githubusercontent.com/luxedo/spacewar-almost-from-scratch/master/report-assets/credits.png "credits")
+![credits](report-assets/credits.png "credits")
 
 ## 18:30 - Enemy AI
 I didn't want to make a very complicated AI, otherwise it would take too much time. I came up with a simple solution. The enemy always tries to face `player1`, it fires it's weapon when the player is closer than 200px of distance and pointing in the right direction, and it will fire it's thrusters when the player shot more than two shots or if the player is too far.
