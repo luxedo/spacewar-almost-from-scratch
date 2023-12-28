@@ -1,6 +1,6 @@
 /*
 spacewar-almost-from-scratch
-This is an attempt of making the game pong using modern programming languages
+This is an attempt of making the game spacewar using modern programming languages
 
 Copyright (C) 2016  Luiz Eduardo Amaral - <luizamaral306@gmail.com>
 
