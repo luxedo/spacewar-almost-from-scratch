@@ -23,33 +23,39 @@ const STARS = 40;
 const GRAVITY = 50;
 
 const p1Spawn = [150, 150];
-// const p1Spawn = [450, 410];
 const p2Spawn = [450, 450];
-const player1Keys = {
-  keyUp: 83,
-  keyDown: 87,
-  keyLeft: 65,
-  keyRight: 68,
-};
-const player2Keys = {
-  keyUp: 40,
-  keyDown: 38,
-  keyLeft: 37,
-  keyRight: 39,
-};
+
+const clearP2Commands = () => {
+  if (!Game.player2) return;
+  Game.player2.keyUp = undefined;
+  Game.player2.keyDown = undefined;
+  Game.player2.keyLeft = undefined;
+  Game.player2.keyRight = undefined;
+}
+
+const initPlayers = () => {
+  Game.player1 = new Ship(...p1Spawn, player1Keys, player1Vectors, 1.5, Game.laser1);
+  Game.player1.updateRotation(Math.PI/4);
+  Game.player2 = new Ship(...p2Spawn, player2Keys, player2Vectors, 1.5, Game.laser2);
+  Game.player2.updateRotation(-3*Math.PI/4);
+  if (gameMode === "versus") return;
+  clearP2Commands();
+}
+
+const initArena = () => {
+    // Setup background
+    versusScreen.stars = versusScreen.makeStars();
+    // Create players
+    versusScreen.blackhole = new Blackhole(Game.width/2, Game.height/2)
+    versusScreen.ended = false;
+}
+
+
 
 versusScreen.init = () => {
-  // Setup background
-  versusScreen.stars = versusScreen.makeStars();
-  // Create players
-  Game.player1 = new Ship(...p1Spawn, player1Keys, player1Vectors, 1.5, Game.laser1);
-  Game.player2 = new Ship(...p2Spawn, player2Keys, player2Vectors, 1.5, Game.laser2);
-  Game.player1.updateRotation(Math.PI/4);
-  Game.player2.updateRotation(-3*Math.PI/4);
-  versusScreen.blackhole = new Blackhole(Game.width/2, Game.height/2)
-
-  versusScreen.ended = false;
   gameMode = "versus";
+  initPlayers();
+  initArena();
 }
 
 versusScreen.draw = function () {
@@ -68,9 +74,9 @@ versusScreen.draw = function () {
   Game.context.drawImage(Game.maskCanvas, 0, 0)
 }
 
-versusScreen.update = function () {
+versusScreen.update = function () {  
+  checkGamepadState();
   if (Key.isDown(27)) {
-    // Game.blip4();
     Game.changeState(startScreen);
   }
   if (!document.hasFocus()) {
@@ -130,8 +136,7 @@ versusScreen.checkCollision = function(sprite1, sprite2) {
   const p2right = Math.max(...p2cTR.map(value => value[0]))
   const p2top = Math.min(...p2cTR.map(value => value[1]))
   const p2bottom = Math.max(...p2cTR.map(value => value[1]))
-  // Check if shadows overlap in both axes
-  // console.log(p1left, p1right, p1top, p1bottom, p2left, p2right, p2top, p2bottom);
+
   if (p2left < p1right && p1left < p2right && p2top < p1bottom && p1top < p2bottom) return true;
   return false;
 }
@@ -148,17 +153,15 @@ versusScreen.makeStars = () => {
 }
 
 // Play against AI
-enemyScreen.init = () => {
-  versusScreen.init()
-  Game.player2.keyUp = undefined;
-  Game.player2.keyDown = undefined;
-  Game.player2.keyLeft = undefined;
-  Game.player2.keyRight = undefined;
+enemyScreen.init = () => { 
   gameMode = "enemy";
+  initPlayers();
+  initArena();
   Game.player2.evade();
 };
 enemyScreen.draw = versusScreen.draw;
 enemyScreen.update = () => {
+  checkGamepadState();
   if (!document.hasFocus()) {
     return
   }
