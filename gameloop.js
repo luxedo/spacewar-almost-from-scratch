@@ -19,7 +19,7 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 "use strict";
 
-const VERSION = "v1.1";
+const VERSION = "v1.2";
 // keyboard handler
 const player1Keys = {
   keyUp: 83,
