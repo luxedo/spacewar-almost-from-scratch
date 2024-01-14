@@ -1,6 +1,6 @@
 /*
 spacewar-almost-from-scratch
-This is an attempt of making the game pong using modern programming languages
+This is an attempt of making the game spacewar using modern programming languages
 
 Copyright (C) 2016  Luiz Eduardo Amaral - <luizamaral306@gmail.com>
 
@@ -19,8 +19,22 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 "use strict";
 
-const VERSION = "v1.1";
+const VERSION = "v1.2";
 // keyboard handler
+const player1Keys = {
+  keyUp: 83,
+  keyDown: 87,
+  keyLeft: 65,
+  keyRight: 68,
+  keyEnter: 13
+};
+const player2Keys = {
+  keyUp: 40,
+  keyDown: 38,
+  keyLeft: 37,
+  keyRight: 39,
+  keyEnter: 13
+};
 let Key = {
   _pressed: {},
   _single: {},
@@ -28,11 +42,101 @@ let Key = {
   onKeydown: function(event) {this._pressed[event.keyCode] = true},
   onKeyup: function(event) {delete this._pressed[event.keyCode]},
 };
+window.addEventListener('gpPressed', (event) => {
+  const mapping = GAMEPAD_MAPPINGS[event.detail.gpType];
+  const playerKeys = event.detail.index > 0 ? player2Keys : player1Keys;
+  event.detail.buttonPressed.forEach(bt => Key.onKeydown({keyCode: mapGpCommands(mapping, bt, playerKeys)}));
+  setTimeout(function() {
+    event.detail.buttonPressed.forEach(bt => Key.onKeyup({keyCode: mapGpCommands(mapping, bt, playerKeys)}));
+  },50)
+}, false)
 window.addEventListener('keyup', (event) => { Key.onKeyup(event) }, false);
 window.addEventListener("keydown", (event) => {
   Key.onKeydown(event);
   if([32, 37, 38, 39, 40, 13].indexOf(event.keyCode) > -1) {event.preventDefault()}
 }, false);
+
+//gamepad handler
+let gamePads = navigator.getGamepads();
+let LAST_GP_UPDATE_TIMESTAMP = [0,0];
+
+const mapGpCommands = (mapping, button, playerKeys) => {
+  const gpAction = Object.keys(mapping)[Object.values(mapping).findIndex(v => v === button)];
+  if(!playerKeys[gpAction]) return 0;
+  return playerKeys[gpAction];
+}
+
+window.addEventListener('gamepadconnected', e => {
+  console.log('gamepad connected', e);
+  gamePads = navigator.getGamepads ? navigator.getGamepads() : navigator.webkitGetGamepads ? navigator.webkitGetGamepads() :[];
+});
+
+window.addEventListener('gamepaddisconnected', e => {
+  console.log('gamepad disconnected', e);
+  gamePads = navigator.getGamepads ? navigator.getGamepads() : navigator.webkitGetGamepads ? navigator.webkitGetGamepads() :[];
+});
+
+const GAMEPAD_MAPPINGS = {
+  XBOX360: {
+    keyUp: 13,
+    keyDown: 12,
+    keyLeft: 14,
+    keyRight: 15,
+    keyEnter: 1
+  },
+  //These are probably horrible defaults since the xbox controller is known to be idiosyncratic
+  //but they'll do until someone with another controller chimes in to test.
+  DEFAULT: {
+    keyUp: 13,
+    keyDown: 12,
+    keyLeft: 14,
+    keyRight: 15,
+    keyEnter: 1
+  }
+}
+
+const checkGamepadState = () => {
+  if (!gamePads.length) {
+    console.log('No gamepads Connected!')
+    return;
+  }
+  gamePads = navigator.getGamepads ? navigator.getGamepads() : navigator.webkitGetGamepads ? navigator.webkitGetGamepads() :[];
+  gamePads.forEach((gp,i) => gp && handleGamePad(gp,i))
+} 
+
+const handleGamePad = (gamePad, index) => {
+  LAST_GP_UPDATE_TIMESTAMP[index] = gamePad.timestamp;
+  const gpType = Object.keys(GAMEPAD_MAPPINGS).find(k => gamePad.id.toUpperCase().replace(' ',"").includes(k))
+
+  const buttonPressed = gamePad.buttons.reduce((pb,cb,i) => {
+    if (cb.pressed) pb.push(i);
+    return pb;
+  }, []);
+
+  // horizontal axes
+  if (gamePad.axes[0] == 1.0) {
+    buttonPressed.push(GAMEPAD_MAPPINGS[gpType].keyRight)
+  } else if (gamePad.axes[0] == -1.0) {
+    buttonPressed.push(GAMEPAD_MAPPINGS[gpType].keyLeft)
+  }
+  // vertical axes
+  if (gamePad.axes[1] == 1.0) {
+    buttonPressed.push(GAMEPAD_MAPPINGS[gpType].keyUp)
+  } else if (gamePad.axes[1] == -1.0) {
+    buttonPressed.push(GAMEPAD_MAPPINGS[gpType].keyDown)
+  }
+
+  let gpState = {
+    buttonPressed,
+    index,
+    gpType
+  };
+  const gamePadButtonPressedEvent = new CustomEvent('gpPressed',{ detail: gpState});
+  window.dispatchEvent(gamePadButtonPressedEvent);
+}
+
+
+
 
 // Game object
 let Game = {

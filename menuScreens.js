@@ -1,6 +1,6 @@
 /*
 spacewar-almost-from-scratch
-This is an attempt of making the game pong using modern programming languages
+This is an attempt of making the game spacewar using modern programming languages
 
 Copyright (C) 2016  Luiz Eduardo Amaral - <luizamaral306@gmail.com>
 
@@ -53,6 +53,7 @@ creditsScreen.draw = () => {
   writeCentered(570, VERSION);
 }
 creditsScreen.update = () => {
+  checkGamepadState();
   if (Key.isDown(27)) {
     Game.laser1();
     Game.changeState(startScreen);
@@ -80,6 +81,7 @@ startScreen.draw = () => {
   writeCentered(570, VERSION);
 }
 startScreen.update = () => {
+  checkGamepadState();
   startScreen.arrow.update()
   if (Key.isDown(13)) {
     if (Game.keyTimeout > Date.now()) return;
@@ -112,6 +114,7 @@ gameOverScreen.draw = () => {
   writeCentered(570, VERSION);
 }
 gameOverScreen.update = () => {
+  checkGamepadState();
   gameOverScreen.arrow.update()
   if (Key.isDown(13)) {
     if (Game.keyTimeout > Date.now()) return

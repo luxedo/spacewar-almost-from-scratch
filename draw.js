@@ -1,6 +1,6 @@
 /*
 spacewar-almost-from-scratch
-This is an attempt of making the game pong using modern programming languages
+This is an attempt of making the game spacewar using modern programming languages
 
 Copyright (C) 2016  Luiz Eduardo Amaral - <luizamaral306@gmail.com>
 
@@ -184,6 +184,7 @@ class Ship extends BaseSprite {
     this.keyDown = keys.keyDown;
     this.keyLeft = keys.keyLeft;
     this.keyRight = keys.keyRight;
+    this.keyEnter = keys.keyEnter;
     this.shape = shape;
     this.size = size;
     this.rotation = 0;
@@ -245,7 +246,7 @@ class Ship extends BaseSprite {
     super.update();
     this.thrusters = false;
     if (!this.dead) {
-      if (Key.isDown(this.keyUp)) {
+      if (Key.isDown(this.keyUp) || Key.isDown(this.keyEnter)) {
         // fire weapon
         this.fire();
       };
