@@ -156,7 +156,7 @@ The game board wraps around itself, making it infinite. So, whenever a player or
 When the two players collide, there is an explosion and the game should end. This check is made in the gameloop's update method.
 The collision is calculated using [Separating Axis Theorem](https://en.wikipedia.org/wiki/Hyperplane_separation_theorem). It ended up in a function with 15 constants and a single if statement to tell whether the ships have collided.
 
-```javascript
+```javascripthttps://github.com/Sanscripter
 checkCollision = function(sprite1, sprite2) {
   // Limits of the sprite
   const p1c = sprite1.corners;
@@ -297,3 +297,7 @@ Also, as `00jknight` pointed out, I changed the commands of `fire torpedos` and 
 
 Thats it for ever.
 #### Bye
+
+## 70128:00+ - Controller support
+
+Special thanks to [Sanscripter](https://github.com/Sanscripter) for adding controller support.
